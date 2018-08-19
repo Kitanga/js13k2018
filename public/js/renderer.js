@@ -3,10 +3,26 @@
 
 
 // Bresenham functions
+/**
+ * An algorithm that creates a pixel on screen
+ * 
+ * @param {CanvasRenderingContext2D} ctx The canvas context to draw to
+ * @param {number=} x The x position on canvas
+ * @param {number=} y The y position on canvas
+ */
 function Thoran_setPixel(ctx, x, y) {
     ctx.fillRect(x, y, 1, 1);
 }
 
+/**
+ * 
+ * @param {CanvasRenderingContext2D} ctx The canvas context to draw to
+ * @param {number=} x0 First point's x value
+ * @param {number=} y0 First point's y value
+ * @param {number=} x1 Second point's x value
+ * @param {number=} y1 Second point's y value
+ * @param {string=} color The color as a css color string
+ */
 function Thoran_plotLine(ctx, x0, y0, x1, y1, color) {
     var dx = Math.abs(x1 - x0),
         sx = x0 < x1 ? 1 : -1;
@@ -39,8 +55,15 @@ function Thoran_plotLine(ctx, x0, y0, x1, y1, color) {
     }
 }
 
+/**
+ * Draws an object on a canvas
+ * 
+ * @param {CanvasRenderingContext2D} ctx The canvas context to draw to
+ * @param {{x: number, y: number, radius: number, w: number, h: number, quadrant: number, shouldFill: bool, color: string}} [options] config object for drawing circle
+ */
 function Thoran_plotCircle(ctx, options) {
     var options = options || {};
+
     var width = Math.floor((typeof options.w === 'undefined' ? (ctx.canvas.width - 1) : options.w));
     var height = Math.floor((typeof options.h === 'undefined' ? (ctx.canvas.height - 1) : options.h));
     var rad = typeof options.radius === 'undefined' ? Math.floor(width / 2) : options.radius;
@@ -169,12 +192,21 @@ function Thoran_plotCircle(ctx, options) {
     while (x < 0);
 }
 
+/**
+ * 
+ * @param {CanvasRenderingContext2D} ctx The canvas context to draw to
+ * @param {{x: number, y: number, w: number, h: number, shouldFill: boolean, color: string}} [options] config object for drawing Rectangle
+ */
 function Thoran_plotRectangle(ctx, options) {
+
     var options = options || {};
+
     var width = Math.floor(typeof options.w === 'undefined' ? ctx.canvas.width - 1 : options.w);
     var height = Math.floor(typeof options.h === 'undefined' ? ctx.canvas.height - 1 : options.h);
     var x = typeof options.x === 'undefined' ? 0 : options.x;
     var y = typeof options.y === 'undefined' ? 0 : options.y;
+
+    console.log(arguments);
 
     ctx.fillStyle = options.color || 'black';
 
@@ -196,9 +228,15 @@ function Thoran_plotRectangle(ctx, options) {
     }
 }
 
-// x0, y0, w, h, radius, color, shouldFill
+/**
+ * Creates a rectangle with rounded corners
+ * 
+ * @param {CanvasRenderingContext2D} ctx The canvas context to draw to
+ * @param {{x: number, y: number, w: number, h: number, shouldFill: boolean, color: string, borderRadius: number}} [options] config object for drawing Rectangle
+ */
 function Thoran_plotRoundedRect(ctx, options) {
     var options = options || {};
+
     var width = Math.floor(typeof options.w === 'undefined' ? ctx.canvas.width - 1 : options.w);
     var height = Math.floor(typeof options.h === 'undefined' ? ctx.canvas.height - 1 : options.h);
     var x = typeof options.x === 'undefined' ? 0 : options.x;
@@ -263,33 +301,43 @@ function Thoran_plotRoundedRect(ctx, options) {
     }); /* Bottom Left */
 }
 
-var test_canvas = util_createCanvas(500, 500, function (ctx) {
-    // Draw a line
-    // Thoran_plotLine(ctx, 0, 0, ctx.canvas.width, ctx.canvas.height);
+//#region Test canvas
+// var test_canvas = util_createCanvas(500, 500, function (ctx) {
+// Draw a line
+// Thoran_plotLine(ctx, 0, 0, ctx.canvas.width, ctx.canvas.height);
 
-    // Draw an unfilled circle
-    // Thoran_plotCircle(ctx, {
-    //     radius: 70,
-    //     shouldFill: true,
-    //     color: 'blue'
-    // });
+// Draw an unfilled circle
+// Thoran_plotCircle(ctx, {
+//     radius: 70,
+//     shouldFill: true,
+//     color: 'blue'
+// });
 
-    // Draw a filled circle
-    // Thoran_plotCircle(ctx, {
-    //     shouldFill: true,
-    //     quadrant: 't'
-    // });
+// Draw a filled circle
+// Thoran_plotCircle(ctx, {
+//     shouldFill: true,
+//     quadrant: 't'
+// });
 
-    // Draw a rectangle
-    // Thoran_plotRectangle(ctx, {
-    //     // shouldFill: true
-    // });
+// Draw a rectangle
+// Thoran_plotRectangle(ctx, {
+//     // shouldFill: true
+// });
 
-    // Draw a rounded rectangle
-    // Thoran_plotRoundedRect(ctx, {
-    //     borderRadius: 170,
-    //     // shouldFill: true
-    // });
-});
+// Draw a rounded rectangle
+// Thoran_plotRoundedRect(ctx, {
+//     borderRadius: 170,
+//     // shouldFill: true
+// });
+// });
+//#endregion
 
-game.appendChild(test_canvas);
+// Canvas related stuffs
+
+/** @constant {number} */
+var WIDTH = window.innerWidth;
+/** @constant {number} */
+var HEIGHT = window.innerHeight;
+
+var canvas = util_createCanvas(WIDTH, HEIGHT);
+var ctx = canvas.getContext('2d');
