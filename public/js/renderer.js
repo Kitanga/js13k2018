@@ -41,11 +41,11 @@ function Thoran_plotLine(ctx, x0, y0, x1, y1, color) {
 
 function Thoran_plotCircle(ctx, options) {
     var options = options || {};
-    var width = ctx.canvas.width - 1;
-    var height = ctx.canvas.height - 1;
-    var rad = options.radius || Math.floor(width / 2);
-    var xm = options.x || Math.floor(width / 2);
-    var ym = options.y || Math.floor(height / 2);
+    var width = Math.floor((typeof options.w === 'undefined' ? (ctx.canvas.width - 1) : options.w));
+    var height = Math.floor((typeof options.h === 'undefined' ? (ctx.canvas.height - 1) : options.h));
+    var rad = typeof options.radius === 'undefined' ? Math.floor(width / 2) : options.radius;
+    var xm = typeof options.x === 'undefined' ? Math.floor(width / 2) : options.x;
+    var ym = typeof options.y === 'undefined' ? Math.floor(height / 2) : options.y;
 
     /* II. Quadrant */
     var x = -rad,
@@ -95,6 +95,26 @@ function Thoran_plotCircle(ctx, options) {
                 Thoran_setPixel(ctx, xm + y, ym + x); /*  IV. Quadrant Top Right */
                 break;
         }
+
+        // if (options.outline) {
+        //     // 
+        //     ctx.fillStyle = 'yellow';
+        //     // Thoran_setPixel(ctx, xm - x + 1, ym + y);
+        //     // Thoran_setPixel(ctx, xm - x, ym + y + 1);
+
+        //     ctx.fillStyle = 'cyan';
+        //     // Thoran_setPixel(ctx, xm - y - 1, ym - x);
+        //     // Thoran_setPixel(ctx, xm - y, ym - x + 1);
+
+        //     ctx.fillStyle = 'gray';
+        //     // Thoran_setPixel(ctx, xm + x - 1, ym - y);
+        //     // Thoran_setPixel(ctx, xm + x, ym - y - 1);
+
+        //     ctx.fillStyle = 'red';
+        //     // Thoran_setPixel(ctx, xm + y + 1, ym + x);
+        //     // Thoran_setPixel(ctx, xm + y, ym + x - 1);
+        //     ctx.fillStyle = options.color || 'black';
+        // }
 
 
         // Fill the circle
@@ -151,10 +171,10 @@ function Thoran_plotCircle(ctx, options) {
 
 function Thoran_plotRectangle(ctx, options) {
     var options = options || {};
-    var width = Math.floor(options.w || ctx.canvas.width || 1) - 1;
-    var height = Math.floor(options.h || ctx.canvas.height || 1) - 1;
-    var x = options.x || 0;
-    var y = options.y || 0;
+    var width = Math.floor(typeof options.w === 'undefined' ? ctx.canvas.width - 1 : options.w);
+    var height = Math.floor(typeof options.h === 'undefined' ? ctx.canvas.height - 1 : options.h);
+    var x = typeof options.x === 'undefined' ? 0 : options.x;
+    var y = typeof options.y === 'undefined' ? 0 : options.y;
 
     ctx.fillStyle = options.color || 'black';
 
@@ -179,11 +199,11 @@ function Thoran_plotRectangle(ctx, options) {
 // x0, y0, w, h, radius, color, shouldFill
 function Thoran_plotRoundedRect(ctx, options) {
     var options = options || {};
-    var width = Math.floor((!!options.w || ctx.canvas.width || 1) - 1);
-    var height = Math.floor((!!options.h || ctx.canvas.height || 1) - 1);
-    var x = options.x || 0;
-    var y = options.y || 0;
-    var rad = options.borderRadius || 7;
+    var width = Math.floor(typeof options.w === 'undefined' ? ctx.canvas.width - 1 : options.w);
+    var height = Math.floor(typeof options.h === 'undefined' ? ctx.canvas.height - 1 : options.h);
+    var x = typeof options.x === 'undefined' ? 0 : options.x;
+    var y = typeof options.y === 'undefined' ? 0 : options.y;
+    var rad = typeof options.borderRadius === 'undefined' ? 7 : options.borderRadius;
 
     if (!options.shouldFill) {
         // Draw 4 lines
@@ -201,7 +221,7 @@ function Thoran_plotRoundedRect(ctx, options) {
             shouldFill: true,
             // color: 'yellow'
         });
-        
+
         Thoran_plotRectangle(ctx, {
             x: x,
             y: y + rad,
@@ -248,7 +268,11 @@ var test_canvas = util_createCanvas(500, 500, function (ctx) {
     // Thoran_plotLine(ctx, 0, 0, ctx.canvas.width, ctx.canvas.height);
 
     // Draw an unfilled circle
-    // Thoran_plotCircle(ctx);
+    // Thoran_plotCircle(ctx, {
+    //     radius: 70,
+    //     shouldFill: true,
+    //     color: 'blue'
+    // });
 
     // Draw a filled circle
     // Thoran_plotCircle(ctx, {
@@ -257,13 +281,15 @@ var test_canvas = util_createCanvas(500, 500, function (ctx) {
     // });
 
     // Draw a rectangle
-    // Thoran_plotRectangle(ctx);
+    // Thoran_plotRectangle(ctx, {
+    //     // shouldFill: true
+    // });
 
     // Draw a rounded rectangle
-    Thoran_plotRoundedRect(ctx, {
-        borderRadius: 170,
-        // shouldFill: true
-    });
+    // Thoran_plotRoundedRect(ctx, {
+    //     borderRadius: 170,
+    //     // shouldFill: true
+    // });
 });
 
 game.appendChild(test_canvas);
