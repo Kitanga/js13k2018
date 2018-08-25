@@ -13,10 +13,10 @@ function loop() {
     while (_dt < _step) {
         // 
         _dt = _dt - _step;
-        Thoran_update(_step);
+        T_update(_step);
     }
 
-    Thoran_render(_dt);
+    T_render(_dt);
 
     requestAnimationFrame(loop);
 }

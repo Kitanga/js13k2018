@@ -4,8 +4,7 @@
 var doc = document;
 
 /**
- * Binds functions to events
- * 
+ * Binds functions to events 
  * @param {string} type The type of event
  * @param {function(event)} callback The function that runs when the event fires
  */
@@ -13,8 +12,10 @@ doc.on = function (type, callback) {
     this.addEventListener(type, callback);
 };
 
+
+
 /**
- * Get's an element from the DOM
+ * Gets an element from the DOM
  * @param {string} selector CSS selector string
  * @returns {HTMLElement}
  */
@@ -23,8 +24,7 @@ function util_getEle(selector) {
 }
 
 /**
- * Creates an HTML element
- * 
+ * Creates an HTML element 
  * @param {string} tag HTML tag
  * @param {{property: number | string}} attributes An object of parameters to be passed on to the created element
  * @returns {HTMLElement}
@@ -42,7 +42,7 @@ function util_createElement(tag, attributes) {
 }
 
 /**
- * 
+ * Creates a Canvas
  * @param {number} width The width of the canvas
  * @param {number} height The height of the canvas
  * @param {function(CanvasRenderingContext2D)} callback The callback fired upon canvas creation
@@ -57,4 +57,107 @@ function util_createCanvas(width, height, callback) {
     callback ? callback(canvas.getContext('2d')) : '';
 
     return canvas;
+}
+
+/**
+ * Distance
+ * @param {number} x1 The x of a vector
+ * @param {number} y1 The y of a vector
+ * @param {number} x2 The x of a second vector
+ * @param {number} y2 The y of a second vector
+ * 
+ * @returns {number} The distance between the two points
+ */
+function math_distance(x1, y1, x2, y2) {
+    return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
+}
+
+/**
+ * Dot Product
+ * @param {number} x1 The x of a vector
+ * @param {number} y1 The y of a vector
+ * @param {number} x2 The x of a second vector
+ * @param {number} y2 The y of a second vector
+ * 
+ * @returns {number} The Dot Product
+ */
+function math_dot(x1, y1, x2, y2) {
+    return x1 * x2 + y1 * y2;
+}
+
+/**
+ * Cross Product
+ * @param {number} x1 The x of a vector
+ * @param {number} y1 The y of a vector
+ * @param {number} x2 The x of a second vector
+ * @param {number} y2 The y of a second vector
+ * 
+ * @returns {number} The Cross Product
+ */
+function math_cross(x1, y1, x2, y2) {
+    return x1 * y2 - y1 * x2;
+}
+/**
+ * Length of Line
+ * @param {number} x The x of a vector
+ * @param {number} y The y of a second vector
+ * 
+ * @returns {number} The Length of passed line
+ */
+function math_line_length(x, y) {
+    return Math.sqrt(x*x + y*y);
+}
+
+function math_line_unit(){
+    
+}
+/*
+float length(): Returns the length of the vector.
+a.length() = sqrt(a.x * a.x + a.y * a.y);
+float unit(): Returns a vector pointing on the same direction, but with a length of 1.
+a.unit() = a / a.length();
+
+
+Vector2f rotate(float angle): Rotates the vector by the specified angle. This is an extremely useful operation, though it is rarely found in Vector classes. Equivalent to multiplying by the 2×2 rotation matrix.
+a.rotate(angle) =  Vector2f(a.x * cos(angle) – a.y * sin(angle), a.x * sin(angle) + a.y * cos(angle));
+float angle(): Returns the angle that the vector points to.
+a.angle() = atan2(a.y, a.x);
+*/
+
+
+function genName() {
+    var min = 2,
+        max = (2 + rnd() * (max - 2));
+
+    var length = (min + rnd() * (max - min)),
+        consonants = 'bcdfghjklmnprstvwz', // consonants except hard to speak ones
+        vowels = 'aeiou', // vowels
+        all = consonants + vowels, // all
+        text = '',
+        chr;
+
+    // I'm sure there's a more elegant way to do this, but this works
+    // decently well.
+    for (var i = length; i--;) {
+        if (i === 0) {
+            // First character can be anything
+            chr = all[;
+        } /* else if (consonants.indexOf(chr) === -1) {
+            // Last character was a vowel, now we want a consonant
+            chr = this.character({
+                pool: consonants
+            });
+        } else {
+            // Last character was a consonant, now we want a vowel
+            chr = this.character({
+                pool: vowels
+            });
+        } */
+
+        text += chr;
+    }
+
+    text = capitalize(text);
+
+    return text;
 }

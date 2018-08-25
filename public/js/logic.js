@@ -25,7 +25,7 @@ canvas.onclick = function(event) {
  * 
  * @param {number} dt Delta time
  */
-function Thoran_update(dt) {
+function T_update(dt) {
     player_update(dt);
 }
 
@@ -34,6 +34,6 @@ function Thoran_update(dt) {
  * 
  * @param {number} dt Delta time
  */
-function Thoran_render(dt) {
+function T_render(dt) {
     player_render(dt);
 }
