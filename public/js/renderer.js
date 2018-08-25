@@ -9,7 +9,7 @@
  * @param {number=} x The x position on canvas
  * @param {number=} y The y position on canvas
  */
-function Thoran_setPixel(ctx, x, y) {
+function T_setPixel(ctx, x, y) {
     ctx.fillRect(x, y, 1, 1);
 }
 
@@ -22,7 +22,7 @@ function Thoran_setPixel(ctx, x, y) {
  * @param {number=} y1 Second point's y value
  * @param {string=} color The color as a css color string
  */
-function Thoran_plotLine(ctx, x0, y0, x1, y1, color) {
+function T_plotLine(ctx, x0, y0, x1, y1, color) {
     var dx = Math.abs(x1 - x0),
         sx = x0 < x1 ? 1 : -1;
     var dy = -Math.abs(y1 - y0),
@@ -36,7 +36,7 @@ function Thoran_plotLine(ctx, x0, y0, x1, y1, color) {
 
     /* loop */
     for (;;) {
-        Thoran_setPixel(ctx, x0, y0);
+        T_setPixel(ctx, x0, y0);
         if (x0 == x1 && y0 == y1) break;
         e2 = 2 * err;
 
@@ -60,7 +60,7 @@ function Thoran_plotLine(ctx, x0, y0, x1, y1, color) {
  * @param {CanvasRenderingContext2D} ctx The canvas context to draw to
  * @param {{x: number, y: number, radius: number, w: number, h: number, quadrant: number, shouldFill: bool, color: string}} [options] config object for drawing circle
  */
-function Thoran_plotCircle(ctx, options) {
+function T_plotCircle(ctx, options) {
     var options = options || {};
 
     var width = Math.floor((typeof options.w === 'undefined' ? (ctx.canvas.width - 1) : options.w));
@@ -79,62 +79,62 @@ function Thoran_plotCircle(ctx, options) {
     do {
         switch (options.quadrant) {
             case 1:
-                Thoran_setPixel(ctx, xm - x, ym + y); /*   I. Quadrant Bottom Right */
+                T_setPixel(ctx, xm - x, ym + y); /*   I. Quadrant Bottom Right */
                 break;
             case 2:
-                Thoran_setPixel(ctx, xm - y, ym - x); /*  II. Quadrant Bottom Left */
+                T_setPixel(ctx, xm - y, ym - x); /*  II. Quadrant Bottom Left */
                 break;
             case 3:
-                Thoran_setPixel(ctx, xm + x, ym - y); /* III. Quadrant Top Left */
+                T_setPixel(ctx, xm + x, ym - y); /* III. Quadrant Top Left */
                 break;
             case 4:
-                Thoran_setPixel(ctx, xm + y, ym + x); /*  IV. Quadrant Top Right */
+                T_setPixel(ctx, xm + y, ym + x); /*  IV. Quadrant Top Right */
                 break;
 
             case 't': // Top Half
-                Thoran_setPixel(ctx, xm + x, ym - y); /* III. Quadrant Top Left */
-                Thoran_setPixel(ctx, xm + y, ym + x); /*  IV. Quadrant Top Right */
+                T_setPixel(ctx, xm + x, ym - y); /* III. Quadrant Top Left */
+                T_setPixel(ctx, xm + y, ym + x); /*  IV. Quadrant Top Right */
                 break;
 
             case 'b': // Bottom Half
-                Thoran_setPixel(ctx, xm - x, ym + y); /*   I. Quadrant Bottom Right */
-                Thoran_setPixel(ctx, xm - y, ym - x); /*  II. Quadrant Bottom Left */
+                T_setPixel(ctx, xm - x, ym + y); /*   I. Quadrant Bottom Right */
+                T_setPixel(ctx, xm - y, ym - x); /*  II. Quadrant Bottom Left */
                 break;
 
             case 'l': // Left half
-                Thoran_setPixel(ctx, xm + x, ym - y); /* III. Quadrant Top Left */
-                Thoran_setPixel(ctx, xm - y, ym - x); /*  II. Quadrant Bottom Left */
+                T_setPixel(ctx, xm + x, ym - y); /* III. Quadrant Top Left */
+                T_setPixel(ctx, xm - y, ym - x); /*  II. Quadrant Bottom Left */
                 break;
 
             case 'r': // Right Half
-                Thoran_setPixel(ctx, xm + y, ym + x); /*  IV. Quadrant Top Right */
-                Thoran_setPixel(ctx, xm - x, ym + y); /*   I. Quadrant Bottom Right */
+                T_setPixel(ctx, xm + y, ym + x); /*  IV. Quadrant Top Right */
+                T_setPixel(ctx, xm - x, ym + y); /*   I. Quadrant Bottom Right */
                 break;
             default:
-                Thoran_setPixel(ctx, xm - x, ym + y); /*   I. Quadrant Bottom Right */
-                Thoran_setPixel(ctx, xm - y, ym - x); /*  II. Quadrant Bottom Left */
-                Thoran_setPixel(ctx, xm + x, ym - y); /* III. Quadrant Top Left */
-                Thoran_setPixel(ctx, xm + y, ym + x); /*  IV. Quadrant Top Right */
+                T_setPixel(ctx, xm - x, ym + y); /*   I. Quadrant Bottom Right */
+                T_setPixel(ctx, xm - y, ym - x); /*  II. Quadrant Bottom Left */
+                T_setPixel(ctx, xm + x, ym - y); /* III. Quadrant Top Left */
+                T_setPixel(ctx, xm + y, ym + x); /*  IV. Quadrant Top Right */
                 break;
         }
 
         // if (options.outline) {
         //     // 
         //     ctx.fillStyle = 'yellow';
-        //     // Thoran_setPixel(ctx, xm - x + 1, ym + y);
-        //     // Thoran_setPixel(ctx, xm - x, ym + y + 1);
+        //     // T_setPixel(ctx, xm - x + 1, ym + y);
+        //     // T_setPixel(ctx, xm - x, ym + y + 1);
 
         //     ctx.fillStyle = 'cyan';
-        //     // Thoran_setPixel(ctx, xm - y - 1, ym - x);
-        //     // Thoran_setPixel(ctx, xm - y, ym - x + 1);
+        //     // T_setPixel(ctx, xm - y - 1, ym - x);
+        //     // T_setPixel(ctx, xm - y, ym - x + 1);
 
         //     ctx.fillStyle = 'gray';
-        //     // Thoran_setPixel(ctx, xm + x - 1, ym - y);
-        //     // Thoran_setPixel(ctx, xm + x, ym - y - 1);
+        //     // T_setPixel(ctx, xm + x - 1, ym - y);
+        //     // T_setPixel(ctx, xm + x, ym - y - 1);
 
         //     ctx.fillStyle = 'red';
-        //     // Thoran_setPixel(ctx, xm + y + 1, ym + x);
-        //     // Thoran_setPixel(ctx, xm + y, ym + x - 1);
+        //     // T_setPixel(ctx, xm + y + 1, ym + x);
+        //     // T_setPixel(ctx, xm + y, ym + x - 1);
         //     ctx.fillStyle = options.color || 'black';
         // }
 
@@ -143,43 +143,43 @@ function Thoran_plotCircle(ctx, options) {
         if (options.shouldFill) {
             switch (options.quadrant) {
                 case 1:
-                    Thoran_plotLine(ctx, xm - x, ym + y, width - Math.round(width / 2), ym + y);
+                    T_plotLine(ctx, xm - x, ym + y, width - Math.round(width / 2), ym + y);
                     break;
                 case 2:
-                    Thoran_plotLine(ctx, xm - y, ym - x, width - Math.round(width / 2), ym - x);
+                    T_plotLine(ctx, xm - y, ym - x, width - Math.round(width / 2), ym - x);
                     // console.log('fill', xm - y, ym - x, width - (xm - y), ym - x);
                     break;
                 case 3:
-                    Thoran_plotLine(ctx, xm + x, ym - y, width - Math.round(width / 2), ym - y);
+                    T_plotLine(ctx, xm + x, ym - y, width - Math.round(width / 2), ym - y);
                     break;
                 case 4:
-                    Thoran_plotLine(ctx, xm + y, ym + x, width - Math.round(width / 2), ym + x);
+                    T_plotLine(ctx, xm + y, ym + x, width - Math.round(width / 2), ym + x);
                     break;
 
                 case 't': // Top Half
-                    Thoran_plotLine(ctx, xm + x, ym - y, width - Math.round(width / 2), ym - y);
-                    Thoran_plotLine(ctx, xm + y, ym + x, width - Math.round(width / 2), ym + x);
+                    T_plotLine(ctx, xm + x, ym - y, width - Math.round(width / 2), ym - y);
+                    T_plotLine(ctx, xm + y, ym + x, width - Math.round(width / 2), ym + x);
                     break;
 
                 case 'b': // Bottom Half
-                    Thoran_plotLine(ctx, xm - x, ym + y, width - Math.round(width / 2), ym + y);
-                    Thoran_plotLine(ctx, xm - y, ym - x, width - Math.round(width / 2), ym - x);
+                    T_plotLine(ctx, xm - x, ym + y, width - Math.round(width / 2), ym + y);
+                    T_plotLine(ctx, xm - y, ym - x, width - Math.round(width / 2), ym - x);
                     break;
 
                 case 'l': // Left half
-                    Thoran_plotLine(ctx, xm + x, ym - y, width - Math.round(width / 2), ym - y);
-                    Thoran_plotLine(ctx, xm - y, ym - x, width - Math.round(width / 2), ym - x);
+                    T_plotLine(ctx, xm + x, ym - y, width - Math.round(width / 2), ym - y);
+                    T_plotLine(ctx, xm - y, ym - x, width - Math.round(width / 2), ym - x);
                     break;
 
                 case 'r': // Right Half
-                    Thoran_plotLine(ctx, xm + y, ym + x, width - Math.round(width / 2), ym + x);
-                    Thoran_plotLine(ctx, xm - x, ym + y, width - Math.round(width / 2), ym + y);
+                    T_plotLine(ctx, xm + y, ym + x, width - Math.round(width / 2), ym + x);
+                    T_plotLine(ctx, xm - x, ym + y, width - Math.round(width / 2), ym + y);
                     break;
                 default:
-                    Thoran_plotLine(ctx, xm - x, ym + y, width - Math.round(width / 2), ym + y);
-                    Thoran_plotLine(ctx, xm - y, ym - x, width - Math.round(width / 2), ym - x);
-                    Thoran_plotLine(ctx, xm + x, ym - y, width - Math.round(width / 2), ym - y);
-                    Thoran_plotLine(ctx, xm + y, ym + x, width - Math.round(width / 2), ym + x);
+                    T_plotLine(ctx, xm - x, ym + y, width - Math.round(width / 2), ym + y);
+                    T_plotLine(ctx, xm - y, ym - x, width - Math.round(width / 2), ym - x);
+                    T_plotLine(ctx, xm + x, ym - y, width - Math.round(width / 2), ym - y);
+                    T_plotLine(ctx, xm + y, ym + x, width - Math.round(width / 2), ym + x);
                     break;
             }
         }
@@ -196,7 +196,7 @@ function Thoran_plotCircle(ctx, options) {
  * @param {CanvasRenderingContext2D} ctx The canvas context to draw to
  * @param {{x: number, y: number, w: number, h: number, shouldFill: boolean, color: string}} [options] config object for drawing Rectangle
  */
-function Thoran_plotRectangle(ctx, options) {
+function T_plotRectangle(ctx, options) {
 
     var options = options || {};
 
@@ -209,20 +209,20 @@ function Thoran_plotRectangle(ctx, options) {
 
     ctx.fillStyle = options.color || 'black';
 
-    Thoran_plotLine(ctx, x, y, width, y);
+    T_plotLine(ctx, x, y, width, y);
     // ctx.fillStyle = 'yello';
-    Thoran_plotLine(ctx, width, y, width, height);
+    T_plotLine(ctx, width, y, width, height);
     // ctx.fillStyle = 'blue';
-    Thoran_plotLine(ctx, width, height, x, height);
+    T_plotLine(ctx, width, height, x, height);
     // ctx.fillStyle = 'cyan';
-    Thoran_plotLine(ctx, x, height, x, y);
-    // Thoran_plotLine(ctx, x, y, 0, height);
-    // Thoran_plotLine(ctx, width, 0, width, height);
-    // Thoran_plotLine(ctx, 0, height, width, height);
+    T_plotLine(ctx, x, height, x, y);
+    // T_plotLine(ctx, x, y, 0, height);
+    // T_plotLine(ctx, width, 0, width, height);
+    // T_plotLine(ctx, 0, height, width, height);
 
     if (options.shouldFill) {
         for (var ix = height; --ix;) {
-            Thoran_plotLine(ctx, x, y + ix, width, y + ix);
+            T_plotLine(ctx, x, y + ix, width, y + ix);
         }
     }
 }
@@ -233,7 +233,7 @@ function Thoran_plotRectangle(ctx, options) {
  * @param {CanvasRenderingContext2D} ctx The canvas context to draw to
  * @param {{x: number, y: number, w: number, h: number, shouldFill: boolean, color: string, borderRadius: number}} [options] config object for drawing Rectangle
  */
-function Thoran_plotRoundedRect(ctx, options) {
+function T_plotRoundedRect(ctx, options) {
     var options = options || {};
 
     var width = Math.floor(typeof options.w === 'undefined' ? ctx.canvas.width - 1 : options.w);
@@ -244,13 +244,13 @@ function Thoran_plotRoundedRect(ctx, options) {
 
     if (!options.shouldFill) {
         // Draw 4 lines
-        Thoran_plotLine(ctx, x + rad, y, width - rad, 0); /* Top */
-        Thoran_plotLine(ctx, x, y + rad, 0, height - rad); /* Left */
-        Thoran_plotLine(ctx, width, 0 + rad, width, height - rad); /* Right */
-        Thoran_plotLine(ctx, 0 + rad, height, width - rad, height); /* Down */
+        T_plotLine(ctx, x + rad, y, width - rad, 0); /* Top */
+        T_plotLine(ctx, x, y + rad, 0, height - rad); /* Left */
+        T_plotLine(ctx, width, 0 + rad, width, height - rad); /* Right */
+        T_plotLine(ctx, 0 + rad, height, width - rad, height); /* Down */
     } else {
         // Draw 2 Rectangles
-        Thoran_plotRectangle(ctx, {
+        T_plotRectangle(ctx, {
             x: x + rad,
             y: y,
             w: width - rad + 1,
@@ -259,7 +259,7 @@ function Thoran_plotRoundedRect(ctx, options) {
             // color: 'yellow'
         });
 
-        Thoran_plotRectangle(ctx, {
+        T_plotRectangle(ctx, {
             x: x,
             y: y + rad,
             w: width + 1,
@@ -270,28 +270,28 @@ function Thoran_plotRoundedRect(ctx, options) {
     }
 
     // Draw 4 circles
-    Thoran_plotCircle(ctx, {
+    T_plotCircle(ctx, {
         x: rad,
         y: rad,
         radius: rad,
         quadrant: 3,
         shouldFill: options.shouldFill
     }); /* Top Left */
-    Thoran_plotCircle(ctx, {
+    T_plotCircle(ctx, {
         x: width - rad,
         y: rad,
         radius: rad,
         quadrant: 4,
         shouldFill: options.shouldFill
     }); /* Top Right */
-    Thoran_plotCircle(ctx, {
+    T_plotCircle(ctx, {
         x: width - rad,
         y: height - rad,
         radius: rad,
         quadrant: 1,
         shouldFill: options.shouldFill
     }); /* Bottom Right */
-    Thoran_plotCircle(ctx, {
+    T_plotCircle(ctx, {
         x: rad,
         y: height - rad,
         radius: rad,
@@ -303,28 +303,28 @@ function Thoran_plotRoundedRect(ctx, options) {
 //#region Test canvas
 // var test_canvas = util_createCanvas(500, 500, function (ctx) {
 // Draw a line
-// Thoran_plotLine(ctx, 0, 0, ctx.canvas.width, ctx.canvas.height);
+// T_plotLine(ctx, 0, 0, ctx.canvas.width, ctx.canvas.height);
 
 // Draw an unfilled circle
-// Thoran_plotCircle(ctx, {
+// T_plotCircle(ctx, {
 //     radius: 70,
 //     shouldFill: true,
 //     color: 'blue'
 // });
 
 // Draw a filled circle
-// Thoran_plotCircle(ctx, {
+// T_plotCircle(ctx, {
 //     shouldFill: true,
 //     quadrant: 't'
 // });
 
 // Draw a rectangle
-// Thoran_plotRectangle(ctx, {
+// T_plotRectangle(ctx, {
 //     // shouldFill: true
 // });
 
 // Draw a rounded rectangle
-// Thoran_plotRoundedRect(ctx, {
+// T_plotRoundedRect(ctx, {
 //     borderRadius: 170,
 //     // shouldFill: true
 // });
@@ -336,8 +336,9 @@ function Thoran_plotRoundedRect(ctx, options) {
 var WIDTH = window.innerWidth;
 var HEIGHT = window.innerHeight;
 
-var canvas = doc.createElement('canvas');
-canvas.style = "width: " + WIDTH + 'px;' + "height: " + HEIGHT + 'px;';
+var canvas = util_createCanvas(WIDTH, HEIGHT);
+// var canvas = doc.createElement('canvas');
+// canvas.style = "width: " + WIDTH + 'px;' + "height: " + HEIGHT + 'px;';
 var ctx = canvas.getContext('2d');
 
 // Add to DOM
