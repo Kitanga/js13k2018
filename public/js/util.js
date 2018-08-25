@@ -46,11 +46,12 @@ function util_createElement(tag, attributes) {
  * @param {number} width The width of the canvas
  * @param {number} height The height of the canvas
  * @param {function(CanvasRenderingContext2D)} callback The callback fired upon canvas creation
+ * @returns {HTMLCanvasElement}
  */
 function util_createCanvas(width, height, callback) {
     var _obj = {};
-    _obj.width = width;
-    _obj.height = height;
+    _obj.width = width || 0;
+    _obj.height = height || 0;
 
     var canvas = util_createElement('canvas', _obj);
     callback ? callback(canvas.getContext('2d')) : '';

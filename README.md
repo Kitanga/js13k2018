@@ -3,7 +3,7 @@
 ## Technology
 
 - Programming language: ES5 JavaScript
-- Sprite Editor: 
+- Sprite Editor: Aseprite
 
 ## File structure
 
@@ -27,3 +27,14 @@
 `js/` contains the JavaScript files.
 
 `index.html` is our html file that the game runs in.
+
+## Documentation
+
+### MVP
+
+Must have the following:
+
+- [ ] Tile based world rendering
+- [ ] Mouse as primary control
+- [ ] Map generation with open and not open areas
+- [ ] Combat using mouse and keyboard

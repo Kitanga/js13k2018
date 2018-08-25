@@ -1,7 +1,6 @@
 // Use ES5, no ES6
 'use strict';
 
-
 // Bresenham functions
 /**
  * An algorithm that creates a pixel on screen
@@ -148,7 +147,7 @@ function Thoran_plotCircle(ctx, options) {
                     break;
                 case 2:
                     Thoran_plotLine(ctx, xm - y, ym - x, width - Math.round(width / 2), ym - x);
-                    console.log('fill', xm - y, ym - x, width - (xm - y), ym - x);
+                    // console.log('fill', xm - y, ym - x, width - (xm - y), ym - x);
                     break;
                 case 3:
                     Thoran_plotLine(ctx, xm + x, ym - y, width - Math.round(width / 2), ym - y);
@@ -206,7 +205,7 @@ function Thoran_plotRectangle(ctx, options) {
     var x = typeof options.x === 'undefined' ? 0 : options.x;
     var y = typeof options.y === 'undefined' ? 0 : options.y;
 
-    console.log(arguments);
+    // console.log(arguments);
 
     ctx.fillStyle = options.color || 'black';
 
@@ -334,10 +333,12 @@ function Thoran_plotRoundedRect(ctx, options) {
 
 // Canvas related stuffs
 
-/** @constant {number} */
 var WIDTH = window.innerWidth;
-/** @constant {number} */
 var HEIGHT = window.innerHeight;
 
 var canvas = util_createCanvas(WIDTH, HEIGHT);
 var ctx = canvas.getContext('2d');
+
+// Add to DOM
+var container = util_getEle('#game');
+container.appendChild(canvas);

@@ -13,16 +13,19 @@ function loop() {
     while (_dt < _step) {
         // 
         _dt = _dt - _step;
-        update(_step);
+        Thoran_update(_step);
     }
 
-    render(_dt);
+    Thoran_render(_dt);
 
     requestAnimationFrame(loop);
 }
 
-function update(dt) {}
+function startGame() {
+    // Getting the screen we'll draw to
+    player_screen = canvas;
+    player_screenCtx = player_screen.getContext('2d');
+    requestAnimationFrame(loop);
+}
 
-function render(dt) {}
-
-function startGame() {}
+startGame();

@@ -1,30 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>JS13k2018</title>
     <style>
-        html, body {
+        html {
+            width: 100%;
+            height: 100%;
+        }
+
+        body {
             width: 100%;
             height: 100%;
             padding: 0;
             margin: 0;
+            overflow: hidden;
         }
+
         #game {
             width: 100%;
             height: 100%;
-            display: flex;
+            /* display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: center; */
         }
+
         canvas {
             image-rendering: crisp-edges;
             image-rendering: pixelated;
         }
     </style>
 </head>
+
 <body>
     <!-- Container for canvas -->
     <div id="game"></div>
@@ -33,6 +43,8 @@
     <script src="js/util.js"></script>
     <script src="js/renderer.js"></script>
     <script src="js/logic.js"></script>
+    <script src="js/player.js"></script>
     <script src="js/main.js"></script>
 </body>
+
 </html>

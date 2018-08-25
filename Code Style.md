@@ -4,6 +4,10 @@
 
 Make sure a js file is created and added to the index.html. The Javascript file must have `'use strict';` at the top of the line.
 
+All rendering and logic code that occurs on the front-end should be prefixed with `Thoran_`.
+
+And also, all code that needs to run in web workers (e.g. A* algorithm) will be prefixed with `Norah_`
+
 ----
 
 ## Underscore notation
