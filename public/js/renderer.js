@@ -336,7 +336,8 @@ function Thoran_plotRoundedRect(ctx, options) {
 var WIDTH = window.innerWidth;
 var HEIGHT = window.innerHeight;
 
-var canvas = util_createCanvas(WIDTH, HEIGHT);
+var canvas = doc.createElement('canvas');
+canvas.style = "width: " + WIDTH + 'px;' + "height: " + HEIGHT + 'px;';
 var ctx = canvas.getContext('2d');
 
 // Add to DOM
