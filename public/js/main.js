@@ -26,7 +26,7 @@ function startGame() {
     // player_screen = canvas;
     // player_screenCtx = player_screen.getContext('2d');
     // requestAnimationFrame(loop);
-    cellularAutomata(WIDTH, HEIGHT);
+    cellularAutomata(Math.round(WIDTH / 3),Math.round(WIDTH / 3));
 }
 
 startGame();

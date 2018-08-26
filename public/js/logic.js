@@ -37,6 +37,54 @@ function T_update(dt) {
 function T_render(dt) {
     player_render(dt);
 }
+var config1 = {
+    chanceToLive: 0.43,
+    birthLimit: 34,
+    deathLimit: 22,
+    steps: 5,
+    range: -3,
+    length: -3 * -1 + 1
+};
+var config2 = {
+    chanceToLive: 0.52,
+    birthLimit: 34,
+    deathLimit: 22,
+    steps: 2,
+    range: -3,
+    length: -3 * -1 + 1
+};
+var config3 = {
+    chanceToLive: 0.61,
+    birthLimit: 22,
+    deathLimit: 17,
+    steps: 2,
+    range: -3,
+    length: -3 * -1 + 1
+};
+var config4 = {
+    chanceToLive: 0.43,
+    birthLimit: 30,
+    deathLimit: 22,
+    steps: 4,
+    range: -3,
+    length: -3 * -1 + 1
+};
+var seaConfig = {
+    chanceToLive: 0.33,
+    birthLimit: 90,
+    deathLimit: 72,
+    steps: 5,
+    range: -5,
+    length: -5 * -1 + 1,
+};
+var seaConfig = {
+    chanceToLive: 0.25,
+    birthLimit: 107,
+    deathLimit: 70,
+    steps: 48,
+    range: -6,
+    length: -6 * -1 + 1,
+};
 
 /**
  * Cellular automata for Terrain Generation
@@ -48,16 +96,18 @@ function T_render(dt) {
 
 function cellularAutomata(width, height) {
     // Setup variables
-    var chanceToLive = 0.43;
-    var birthLimit = 4;
-    var deathLimit = 3;
-    var steps = 2;
+    var chanceToLive = seaConfig.chanceToLive;
+    var birthLimit = seaConfig.birthLimit;
+    var deathLimit = seaConfig.deathLimit;
+    var steps = seaConfig.steps;
+    var range = seaConfig.range;
+    var length = seaConfig.length;
 
     var map = new Array(height);
     // Fill the map
-    for (var ix = map.length; ix--;) {
+    for (var ix = 0; ix < height; ix++) {
         map[ix] = new Array(width);
-        for (var kx = width; kx--;) {
+        for (var kx = 0; kx < width; kx++) {
             // It set's the tile to true if it has a chance to live
             map[ix][kx] = rnd() > chanceToLive ? 1 : 0;
             // map
@@ -68,13 +118,21 @@ function cellularAutomata(width, height) {
     // Start processing array
     var countAliveNeighbours = function (x, y) {
         var count = 0;
-        for (var ix = -1; ix < 2; ix += 1) {
-            for (var kx = -1; kx < 2; kx += 1) {
-                // 
-                if (ix !== 0 && kx !== 0) {
-                    if (map[y + ix] && map[y + ix][x + kx]) {
-                        count++;
-                    }
+
+        for (var ix = range; ix < length; ix++) {
+            for (var kx = range; kx < length; kx++) {
+                var neighbour_x = x + kx;
+                var neighbour_y = y + ix;
+                if (ix == 0 && kx == 0) {
+                    //Do nothing, we don't want to add ourselves in!
+                }
+                //In case the index we're looking at it off the edge of the map
+                else if (neighbour_x < 0 || neighbour_y < 0 || neighbour_x >= map[0].length || neighbour_y >= map.length) {
+                    count = count + 1;
+                }
+                //Otherwise, a normal check of the neighbour
+                else if (map[neighbour_y] && map[neighbour_y][neighbour_x]) {
+                    count = count + 1;
                 }
             }
         }
@@ -82,21 +140,21 @@ function cellularAutomata(width, height) {
     };
     var process = function () {
         var map2 = new Array(height);
-        for (var ix = height; ix--;) {
+        for (var ix = 0; ix < height; ix++) {
             map2[ix] = new Array(width);
-            for (var kx = width; kx--;) {
+            for (var kx = 0; kx < width; kx++) {
                 var nCount = countAliveNeighbours(kx, ix);
                 if (map[ix][kx]) {
                     if (nCount < deathLimit) {
                         map2[ix][kx] = 0;
                     } else {
-                        map2[ix][kx] = 1;                        
-                    }                                                  
+                        map2[ix][kx] = 1;
+                    }
                 } else {
                     if (nCount > birthLimit) {
                         map2[ix][kx] = 1;
                     } else {
-                        map2[ix][kx] = 0;                        
+                        map2[ix][kx] = 0;
                     }
                 }
             }
@@ -109,14 +167,15 @@ function cellularAutomata(width, height) {
         }
     };
     var renderMap = function () {
-        ctx.fillStyle = "black";
-        for (var ix = height; ix--;) {
-            for (var kx = width; kx--;) {
+
+        for (var ix = 0; ix < height; ix++) {
+            for (var kx = 0; kx < width; kx++) {
                 if (map[ix][kx]) {
-                    // console.log("draw at ", kx, ix);
+                    ctx.fillStyle = "black";
                     T_setPixel(ctx, kx, ix);
                 } else {
-                    // console.log(map);
+                    ctx.fillStyle = "blue";
+                    T_setPixel(ctx, kx, ix);
                 }
             }
         }
@@ -127,4 +186,3 @@ function cellularAutomata(width, height) {
 
     return map;
 }
-
