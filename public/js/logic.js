@@ -82,8 +82,6 @@ function cellularAutomata(width, height) {
     };
     var process = function () {
         var map2 = new Array(height);
-        console.log(map2);
-
         for (var ix = height; ix--;) {
             map2[ix] = new Array(width);
             for (var kx = width; kx--;) {
@@ -93,7 +91,7 @@ function cellularAutomata(width, height) {
                         map2[ix][kx] = 0;
                     } else {
                         map2[ix][kx] = 1;                        
-                    }
+                    }                                                  
                 } else {
                     if (nCount > birthLimit) {
                         map2[ix][kx] = 1;
