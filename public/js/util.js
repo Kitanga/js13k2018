@@ -12,7 +12,7 @@ doc.on = function (type, callback) {
     this.addEventListener(type, callback);
 };
 
-
+var rnd = Math.random;
 
 /**
  * Gets an element from the DOM
@@ -105,11 +105,11 @@ function math_cross(x1, y1, x2, y2) {
  * @returns {number} The Length of passed line
  */
 function math_line_length(x, y) {
-    return Math.sqrt(x*x + y*y);
+    return Math.sqrt(x * x + y * y);
 }
 
-function math_line_unit(){
-    
+function math_line_unit() {
+
 }
 /*
 float length(): Returns the length of the vector.
@@ -125,9 +125,9 @@ a.angle() = atan2(a.y, a.x);
 */
 
 
-function genName() {
-    var min = 2,
-        max = (2 + rnd() * (max - 2));
+function genName(len) {
+    var min = 1,
+        max = len || 7;
 
     var length = (min + rnd() * (max - min)),
         consonants = 'bcdfghjklmnprstvwz', // consonants except hard to speak ones
@@ -138,26 +138,32 @@ function genName() {
 
     // I'm sure there's a more elegant way to do this, but this works
     // decently well.
-    for (var i = length; i--;) {
-        if (i === 0) {
+    for (var ix = 0; ix < length; ix++) {
+        if (ix === 0) {
             // First character can be anything
-            chr = all[;
-        } /* else if (consonants.indexOf(chr) === -1) {
+            if (length > 1) {
+                chr = all[Math.round(rnd() * (all.length - 1))];
+            } else {
+                chr = all[Math.round(rnd() * (all.length - 1))];
+                var prefx = Math.round(rnd()) ? (vowels[Math.round(rnd() * (vowels.length - 1))].toUpperCase() + consonants[Math.round(rnd() * (consonants.length - 1))]) : (consonants[Math.round(rnd() * (consonants.length - 1))].toUpperCase() + vowels[Math.round(rnd() * (vowels.length - 1))]);
+                chr = prefx + '\'' + chr;
+            }
+        } else if (consonants.indexOf(chr) === -1) {
             // Last character was a vowel, now we want a consonant
-            chr = this.character({
-                pool: consonants
-            });
+            chr = consonants[Math.round(rnd() * (consonants.length - 1))];
         } else {
             // Last character was a consonant, now we want a vowel
-            chr = this.character({
-                pool: vowels
-            });
-        } */
+            chr = vowels[Math.round(rnd() * (vowels.length - 1))];
+        }
 
-        text += chr;
+        text += length > 1 && !ix ? chr.toUpperCase() : chr;
+        if (length > 1 && ix >= length - 1) {
+            var prefx = Math.round(rnd()) ? (vowels[Math.round(rnd() * (vowels.length - 1))].toUpperCase() + consonants[Math.round(rnd() * (consonants.length - 1))]) : (consonants[Math.round(rnd() * (consonants.length - 1))].toUpperCase() + vowels[Math.round(rnd() * (vowels.length - 1))]);
+            text = prefx + '\'' + text;
+        }
     }
 
-    text = capitalize(text);
+    // text = capitalize(text);
 
     return text;
 }

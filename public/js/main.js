@@ -23,9 +23,10 @@ function loop() {
 
 function startGame() {
     // Getting the screen we'll draw to
-    player_screen = canvas;
-    player_screenCtx = player_screen.getContext('2d');
-    requestAnimationFrame(loop);
+    // player_screen = canvas;
+    // player_screenCtx = player_screen.getContext('2d');
+    // requestAnimationFrame(loop);
+    cellularAutomata(WIDTH, HEIGHT);
 }
 
 startGame();
