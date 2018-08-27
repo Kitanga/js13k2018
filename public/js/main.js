@@ -6,6 +6,10 @@ var _dt = 0;
 var _last = 0;
 var _step = 1 / 60;
 
+
+
+var world = cellularAutomata(world_height, world_width);
+
 function loop() {
     _now = performance.now();
     _dt = ((_now - _last) / 1000) < 1 ? (_now - _last) / 1000 : 1;
@@ -17,16 +21,25 @@ function loop() {
     }
 
     T_render(_dt);
-
     requestAnimationFrame(loop);
 }
 
 function startGame() {
     // Getting the screen we'll draw to
+<<<<<<< HEAD
     // player_screen = canvas;
     // player_screenCtx = player_screen.getContext('2d');
     // requestAnimationFrame(loop);
     cellularAutomata(502,502);
+=======
+    player_screen = canvas;
+    player_screenCtx = player_screen.getContext('2d');
+    requestAnimationFrame(loop);
+    //console.log(cellularAutomata(world_height,world_width));
+    renderMap();
+    // cellularAutomata(Math.round(WIDTH / 3),Math.round(WIDTH / 3));
+    // cellularAutomata(Math.round(WIDTH / 3),Math.round(WIDTH / 3));
+>>>>>>> 01af703da30ef823aa449493f32c5f15fe4f5213
 }
 
 startGame();
