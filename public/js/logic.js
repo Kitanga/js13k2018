@@ -37,6 +37,7 @@ function T_update(dt) {
 function T_render(dt) {
     player_render(dt);
 }
+
 var config1 = {
     chanceToLive: 0.43,
     birthLimit: 34,
@@ -90,12 +91,17 @@ var seaConfig = {
 
 function cellularAutomata(width, height) {
     // Setup variables
-    var chanceToLive = config2.chanceToLive;
-    var birthLimit = config2.birthLimit;
-    var deathLimit = config2.deathLimit;
-    var steps = config2.steps;
-    var range = config2.range;
-    // var length = config2.range * -1 + 1;
+    // var chanceToLive = config2.chanceToLive;
+    // var birthLimit = config2.birthLimit;
+    // var deathLimit = config2.deathLimit;
+    // var steps = config2.steps;
+    // var range = config2.range;
+    
+    var chanceToLive = 0.52;
+    var birthLimit = 34;
+    var deathLimit = 22;
+    var steps = 2;
+    var range = -3;
 
     var map = new Array(height);
     // Fill the map
@@ -170,7 +176,7 @@ function cellularAutomata(width, height) {
         }
 
         // Create the beach pixels
-        createBeaches(map);
+        map = createBeaches(map);
     };
     var renderMap = function (map) {
         ctx.fillStyle = "blue";
@@ -199,17 +205,23 @@ function cellularAutomata(width, height) {
     var createBeaches = function (map) {
         // Process the map, looking for beach pixels
 
+        var map2 = new Array(height);
         for (var ix = 0; ix < height; ix++) {
+            map2[ix] = new Array(width);
             for (var kx = 0; kx < width; kx++) {
                 var nCount = countAliveNeighbours(kx, ix, -1);
                 if (map[ix][kx]/*  && ix > 0 && ix < height && kx > 0 && kx < width */) {
                     // If the pixel has less than 8 neighbours turn it into a beach tile
-                    if (nCount < 8) {
-                        map[ix][kx] = 2;
+                    if (nCount < 7) {
+                        map2[ix][kx] = 2;
                     }
+                     else {
+                        map2[ix][kx] = map[ix][kx];
+                     }
                 }
             }
         }
+        return map2;
     };
 
     generateMap();
