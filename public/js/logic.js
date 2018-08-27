@@ -95,7 +95,7 @@ function cellularAutomata(width, height) {
     var deathLimit = config2.deathLimit;
     var steps = config2.steps;
     var range = config2.range;
-    var length = config2.range * -1 + 1;
+    // var length = config2.range * -1 + 1;
 
     var map = new Array(height);
     // Fill the map
@@ -112,6 +112,7 @@ function cellularAutomata(width, height) {
     // Start processing array
     var countAliveNeighbours = function (x, y, range) {
         var count = 0;
+        var length = range * -1 + 1;
 
         for (var ix = range; ix < length; ix++) {
             for (var kx = range; kx < length; kx++) {
@@ -119,6 +120,7 @@ function cellularAutomata(width, height) {
                 var neighbour_y = y + ix;
                 if (ix == 0 && kx == 0) {
                     //Do nothing, we don't want to add ourselves in!
+                    continue;
                 }
                 //In case the index we're looking at it off the edge of the map
                 else if (neighbour_x < 0 || neighbour_y < 0 || neighbour_x >= map[0].length || neighbour_y >= map.length) {
@@ -157,31 +159,62 @@ function cellularAutomata(width, height) {
     };
     var generateMap = function () {
         for (var ix = steps; ix--;) {
-            map = process(deathLimit, birthLimit, range);
+            map = process(deathLimit/*  + ix */, birthLimit, range);
         }
-        for (var ix = 2; ix--;) {
+        for (var ix = 1; ix--;) {
             map = process(4, 3, -1);
         }
+        // Removes any loss specks
+        for (var ix = 1; ix--;) {
+            map = process(3, 9, -1);
+        }
+
+        // Create the beach pixels
+        createBeaches(map);
     };
-    var renderMap = function () {
+    var renderMap = function (map) {
         ctx.fillStyle = "blue";
         ctx.fillRect(0,0,width, height);
-        ctx.fillStyle = "black";
-
+        
+        // Draw the ground blocks
+        ctx.fillStyle = "seaGreen";
         for (var ix = 0; ix < height; ix++) {
             for (var kx = 0; kx < width; kx++) {
                 if (map[ix][kx]) {
                     T_setPixel(ctx, kx, ix);
-                } else {
-                    // ctx.fillStyle = "blue";
-                    // T_setPixel(ctx, kx, ix);
+                }
+            }
+        }
+
+        // Draw the beach blocks
+        ctx.fillStyle = "navajoWhite";
+        for (var ix = 0; ix < height; ix++) {
+            for (var kx = 0; kx < width; kx++) {
+                if (map[ix][kx] === 2) {
+                    T_setPixel(ctx, kx, ix);
+                }
+            }
+        }
+    };
+    var createBeaches = function (map) {
+        // Process the map, looking for beach pixels
+
+        for (var ix = 0; ix < height; ix++) {
+            for (var kx = 0; kx < width; kx++) {
+                var nCount = countAliveNeighbours(kx, ix, -1);
+                if (map[ix][kx]/*  && ix > 0 && ix < height && kx > 0 && kx < width */) {
+                    // If the pixel has less than 8 neighbours turn it into a beach tile
+                    if (nCount < 8) {
+                        map[ix][kx] = 2;
+                    }
                 }
             }
         }
     };
 
     generateMap();
-    renderMap();
+    renderMap(map);
+    // renderBeach(map);
 
     return map;
 }

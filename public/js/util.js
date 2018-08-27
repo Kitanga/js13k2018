@@ -12,7 +12,7 @@ doc.on = function (type, callback) {
     this.addEventListener(type, callback);
 };
 
-var rnd = Math.random;
+var rnd = new alea('test1');
 
 /**
  * Gets an element from the DOM
