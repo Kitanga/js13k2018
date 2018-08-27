@@ -42,48 +42,42 @@ var config1 = {
     birthLimit: 34,
     deathLimit: 22,
     steps: 5,
-    range: -3,
-    length: -3 * -1 + 1
+    range: -3
 };
 var config2 = {
     chanceToLive: 0.52,
     birthLimit: 34,
     deathLimit: 22,
     steps: 2,
-    range: -3,
-    length: -3 * -1 + 1
+    range: -3
 };
 var config3 = {
     chanceToLive: 0.61,
     birthLimit: 22,
     deathLimit: 17,
     steps: 2,
-    range: -3,
-    length: -3 * -1 + 1
+    range: -3
 };
 var config4 = {
     chanceToLive: 0.43,
     birthLimit: 30,
     deathLimit: 22,
     steps: 4,
-    range: -3,
-    length: -3 * -1 + 1
+    range: -3
 };
 var seaConfig = {
     chanceToLive: 0.33,
     birthLimit: 90,
     deathLimit: 72,
     steps: 5,
-    range: -5,
-    length: -5 * -1 + 1,
+    range: -5
 };
 var seaConfig = {
     chanceToLive: 0.25,
     birthLimit: 107,
     deathLimit: 70,
     steps: 48,
-    range: -6,
-    length: -6 * -1 + 1,
+    range: -6
 };
 
 /**
@@ -96,12 +90,12 @@ var seaConfig = {
 
 function cellularAutomata(width, height) {
     // Setup variables
-    var chanceToLive = seaConfig.chanceToLive;
-    var birthLimit = seaConfig.birthLimit;
-    var deathLimit = seaConfig.deathLimit;
-    var steps = seaConfig.steps;
-    var range = seaConfig.range;
-    var length = seaConfig.length;
+    var chanceToLive = config2.chanceToLive;
+    var birthLimit = config2.birthLimit;
+    var deathLimit = config2.deathLimit;
+    var steps = config2.steps;
+    var range = config2.range;
+    var length = config2.range * -1 + 1;
 
     var map = new Array(height);
     // Fill the map
@@ -116,7 +110,7 @@ function cellularAutomata(width, height) {
 
 
     // Start processing array
-    var countAliveNeighbours = function (x, y) {
+    var countAliveNeighbours = function (x, y, range) {
         var count = 0;
 
         for (var ix = range; ix < length; ix++) {
@@ -138,12 +132,12 @@ function cellularAutomata(width, height) {
         }
         return count;
     };
-    var process = function () {
+    var process = function (deathLimit, birthLimit, range) {
         var map2 = new Array(height);
         for (var ix = 0; ix < height; ix++) {
             map2[ix] = new Array(width);
             for (var kx = 0; kx < width; kx++) {
-                var nCount = countAliveNeighbours(kx, ix);
+                var nCount = countAliveNeighbours(kx, ix, range);
                 if (map[ix][kx]) {
                     if (nCount < deathLimit) {
                         map2[ix][kx] = 0;
@@ -163,19 +157,24 @@ function cellularAutomata(width, height) {
     };
     var generateMap = function () {
         for (var ix = steps; ix--;) {
-            map = process();
+            map = process(deathLimit, birthLimit, range);
+        }
+        for (var ix = 2; ix--;) {
+            map = process(4, 3, -1);
         }
     };
     var renderMap = function () {
+        ctx.fillStyle = "blue";
+        ctx.fillRect(0,0,width, height);
+        ctx.fillStyle = "black";
 
         for (var ix = 0; ix < height; ix++) {
             for (var kx = 0; kx < width; kx++) {
                 if (map[ix][kx]) {
-                    ctx.fillStyle = "black";
                     T_setPixel(ctx, kx, ix);
                 } else {
-                    ctx.fillStyle = "blue";
-                    T_setPixel(ctx, kx, ix);
+                    // ctx.fillStyle = "blue";
+                    // T_setPixel(ctx, kx, ix);
                 }
             }
         }
