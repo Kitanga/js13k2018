@@ -4,17 +4,33 @@
 var mouse_x = 0;
 var mouse_y = 0;
 
-window.onload = function () {
-    /* canvas_offsetTop = canvas.offsetTop; */
-    /* canvas_offsetLeft = canvas.offsetLeft; */
+var world_height = 100;
+var world_width = 100;
+
+window.onresize = function () {
+    console.log("canvas offset:"+canvas.offsetTop+","+canvas.offsetLeft);
 };
 
 /** @type {function(Event)} */
 canvas.onclick = function (event) {
     // Get the current mouse position
-    mouse_x = event.pageX /* - canvas_offsetLeft */ ;
-    mouse_y = event.pageY /* - canvas_offsetTop */ ;
-
+    var tempPos = getMousePos(canvas, event);
+    mouse_x = tempPos.x /* - canvas_offsetLeft */ ;
+    mouse_y = tempPos.y /* - canvas_offsetTop */ ;
+    /* position of mouse on canvas */
+    console.log(mouse_x+','+mouse_y);
+    /* grid position of click */
+    console.log(Math.round(mouse_x/16)+','+Math.round(mouse_y/16));
+    /* plot grid position for lols */
+    T_plotRectangle(ctx, {
+        x: Math.floor(mouse_x/16)*16,
+        y: Math.floor(mouse_y/16)*16,
+        w: 16,
+        h: 16,
+        color: 'red'
+    });
+    player_x = mouse_x;
+    player_y = mouse_y;
     // Tell the renderer that the player should start being rendered and that the player should also move towards the last mouse click
     player_shouldRender = true;
     player_shouldTrack = true;
@@ -77,7 +93,7 @@ var seaConfig = {
     range: -5,
     length: -5 * -1 + 1,
 };
-var seaConfig = {
+var seaConfig2 = {
     chanceToLive: 0.25,
     birthLimit: 107,
     deathLimit: 70,
@@ -85,7 +101,14 @@ var seaConfig = {
     range: -6,
     length: -6 * -1 + 1,
 };
-
+var quickConfig = {
+    chanceToLive: 0.21,
+    birthLimit: 3,
+    deathLimit: 6,
+    steps: 3,
+    range: -1,
+    length: -1 * -1 + 1
+};
 /**
  * Cellular automata for Terrain Generation
  * @param width desired width in tiles
@@ -96,12 +119,12 @@ var seaConfig = {
 
 function cellularAutomata(width, height) {
     // Setup variables
-    var chanceToLive = seaConfig.chanceToLive;
-    var birthLimit = seaConfig.birthLimit;
-    var deathLimit = seaConfig.deathLimit;
-    var steps = seaConfig.steps;
-    var range = seaConfig.range;
-    var length = seaConfig.length;
+    var chanceToLive = config1.chanceToLive;
+    var birthLimit = config1.birthLimit;
+    var deathLimit = config1.deathLimit;
+    var steps = config1.steps;
+    var range = config1.range;
+    var length = config1.length;
 
     var map = new Array(height);
     // Fill the map
@@ -166,23 +189,60 @@ function cellularAutomata(width, height) {
             map = process();
         }
     };
-    var renderMap = function () {
-
-        for (var ix = 0; ix < height; ix++) {
-            for (var kx = 0; kx < width; kx++) {
-                if (map[ix][kx]) {
-                    ctx.fillStyle = "black";
-                    T_setPixel(ctx, kx, ix);
-                } else {
-                    ctx.fillStyle = "blue";
-                    T_setPixel(ctx, kx, ix);
-                }
-            }
-        }
-    };
-
+    
     generateMap();
-    renderMap();
+    
 
     return map;
+}
+
+/*
+    renders map around the player
+*/
+var camera_pos_x, camera_pos_y;
+var render_pos_x, render_pos_y;
+
+function renderMap() {
+    /*
+    //change camera pos if player moved
+    //need to also handle top and right boundary
+    camera_pos_x = player_x > 15 ? player_x-16 : 16;
+    camera_pos_y = player_y > 15 ? player_y-16 : 16;
+    */
+    camera_pos_x = 50;
+    camera_pos_y = 50;
+
+    //player_x-15
+    //player_y-15
+    console.log("drawing tiles in range");
+    console.log("X:"+(camera_pos_x-16)+" to "+ (camera_pos_x+16));
+    console.log("Y:"+(camera_pos_y-16)+" to "+ (camera_pos_y+16));
+    for (var y=0, render_pos_x = camera_pos_x-16; render_pos_x < camera_pos_x+16; render_pos_x++, y++) {
+        for (var x=0, render_pos_y = camera_pos_y-16; render_pos_y < camera_pos_y+16; render_pos_y++, x++) {
+            
+            if (world[render_pos_y][render_pos_x]) {
+                //ctx.fillStyle = "black";
+                //T_setPixel(ctx, x*16, y*16);
+                /*T_plotRectangle(ctx, {
+                    x: x*16,
+                    y: y*16,
+                    w: 8,
+                    h: 8,
+                    shouldFill: true,
+                    color: 'black'
+                });*/
+            } else {
+                //ctx.fillStyle = "blue";
+                //T_setPixel(ctx, x*16, y*16);
+                T_plotRectangle(ctx, {
+                    x: x*16,
+                    y: y*16,
+                    w: 16,
+                    h: 16,
+                    shouldFill: true,
+                    color: 'blue'
+                });
+            }
+        }
+    }
 }
