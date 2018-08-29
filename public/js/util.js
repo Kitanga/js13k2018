@@ -13,6 +13,7 @@ doc.on = function (type, callback) {
 };
 
 var rnd = new alea('test1');
+// var rnd = new alea(Math.random());
 
 /**
  * Gets an element from the DOM
@@ -124,6 +125,9 @@ float angle(): Returns the angle that the vector points to.
 a.angle() = atan2(a.y, a.x);
 */
 
+function math_randomInt(min, max) {
+    return Math.round(min + rnd() * (max - min));
+}
 
 function genName(len) {
     var min = 1,

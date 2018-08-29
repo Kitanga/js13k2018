@@ -96,12 +96,15 @@ function cellularAutomata(width, height) {
     // var deathLimit = config2.deathLimit;
     // var steps = config2.steps;
     // var range = config2.range;
-    
+
     var chanceToLive = 0.52;
     var birthLimit = 34;
     var deathLimit = 22;
     var steps = 2;
     var range = -3;
+
+    // All groups of solid pixels are placed in here.
+    var islands = [];
 
     var map = new Array(height);
     // Fill the map
@@ -128,9 +131,9 @@ function cellularAutomata(width, height) {
                     //Do nothing, we don't want to add ourselves in!
                     continue;
                 }
-                //In case the index we're looking at it off the edge of the map
+                // In case the index we're looking at it off the edge of the map
                 else if (neighbour_x < 0 || neighbour_y < 0 || neighbour_x >= map[0].length || neighbour_y >= map.length) {
-                    count = count + 1;
+                    // count = count + 1;
                 }
                 //Otherwise, a normal check of the neighbour
                 else if (map[neighbour_y] && map[neighbour_y][neighbour_x]) {
@@ -165,7 +168,7 @@ function cellularAutomata(width, height) {
     };
     var generateMap = function () {
         for (var ix = steps; ix--;) {
-            map = process(deathLimit/*  + ix */, birthLimit, range);
+            map = process(deathLimit /*  + ix */ , birthLimit, range);
         }
         for (var ix = 1; ix--;) {
             map = process(4, 3, -1);
@@ -177,11 +180,14 @@ function cellularAutomata(width, height) {
 
         // Create the beach pixels
         map = createBeaches(map);
+
+        // Create the forest
+        map = createForests(map);
     };
     var renderMap = function (map) {
         ctx.fillStyle = "blue";
-        ctx.fillRect(0,0,width, height);
-        
+        ctx.fillRect(0, 0, width, height);
+
         // Draw the ground blocks
         ctx.fillStyle = "seaGreen";
         for (var ix = 0; ix < height; ix++) {
@@ -201,6 +207,36 @@ function cellularAutomata(width, height) {
                 }
             }
         }
+
+        // Draw the beach blocks
+        ctx.fillStyle = "darkGreen";
+        for (var ix = 0; ix < height; ix++) {
+            for (var kx = 0; kx < width; kx++) {
+                if (map[ix][kx] === 3) {
+                    T_setPixel(ctx, kx, ix);
+                }
+            }
+        }
+        
+        // Draw the treasure blocks
+        ctx.fillStyle = "black";
+        for (var ix = 0; ix < height; ix++) {
+            for (var kx = 0; kx < width; kx++) {
+                if (map[ix][kx] === 4) {
+                    T_setPixel(ctx, kx, ix);
+                }
+            }
+        }
+        
+        // Draw the village blocks
+        ctx.fillStyle = "red";
+        for (var ix = 0; ix < height; ix++) {
+            for (var kx = 0; kx < width; kx++) {
+                if (map[ix][kx] === 5) {
+                    T_setPixel(ctx, kx, ix);
+                }
+            }
+        }
     };
     var createBeaches = function (map) {
         // Process the map, looking for beach pixels
@@ -210,21 +246,168 @@ function cellularAutomata(width, height) {
             map2[ix] = new Array(width);
             for (var kx = 0; kx < width; kx++) {
                 var nCount = countAliveNeighbours(kx, ix, -1);
-                if (map[ix][kx]/*  && ix > 0 && ix < height && kx > 0 && kx < width */) {
+                if (map[ix][kx]) {
                     // If the pixel has less than 8 neighbours turn it into a beach tile
                     if (nCount < 7) {
                         map2[ix][kx] = 2;
-                    }
-                     else {
+                    } else {
                         map2[ix][kx] = map[ix][kx];
-                     }
+                    }
                 }
             }
         }
         return map2;
     };
+    var createForests = function (map) {
+        var map2 = new Array(height);
+        for (var ix = 0; ix < height; ix++) {
+            map2[ix] = new Array(width);
+            for (var kx = 0; kx < width; kx++) {
+                var nCount = countAliveNeighbours(kx, ix, -1);
+                if (map[ix][kx] && map[ix][kx]) {
+                    // If the pixel has less than 8 neighbours turn it into a beach tile
+                    if (nCount === 8) {
+                        map2[ix][kx] = Math.round(rnd()) ? 3 : map[ix][kx];
+                    } else {
+                        map2[ix][kx] = map[ix][kx];
+                    }
+                }
+            }
+        }
 
+        return map2;
+    };
+
+    var findIslands = function (map, islands) {
+        // All solid pixels go here
+        /** @type {[{checked: boolean}[]]} */
+        var solid = [];
+        var indices = [];
+
+        // Fill the solid[]
+        for (var ix = height; ix--;) {
+            solid[ix] = [];
+            for (var kx = width; kx--;) {
+                if (map[ix][kx]) {
+                    solid[ix][kx] = {
+                        checked: false
+                    };
+                    indices.push({
+                        x: kx,
+                        y: ix
+                    });
+                }
+            }
+        }
+
+        // Now find the filled in areas
+        var getFilledArea = function () {
+
+
+            do {
+                /** @type {{x: number, y: number}[]} */
+                var island = [indices.splice(0, 1)[0]];
+                // console.log('Done a round');
+                // console.log(island);
+                for (var ix = 0; ix < island.length; ix++) {
+                    // console.log("For loop length", island.length);
+                    if (solid[island[ix].y + 1] && solid[island[ix].y + 1][island[ix].x] && !solid[island[ix].y + 1][island[ix].x].checked) {
+                        island.push({
+                            x: island[ix].x,
+                            y: island[ix].y + 1
+                        });
+                        solid[island[ix].y + 1][island[ix].x].checked = true;
+                    }
+                    if (solid[island[ix].y - 1] && solid[island[ix].y - 1][island[ix].x] && !solid[island[ix].y - 1][island[ix].x].checked) {
+                        island.push({
+                            x: island[ix].x,
+                            y: island[ix].y - 1
+                        });
+                        solid[island[ix].y - 1][island[ix].x].checked = true;
+                    }
+                    if (solid[island[ix].y] && solid[island[ix].y][island[ix].x + 1] && !solid[island[ix].y][island[ix].x + 1].checked) {
+                        island.push({
+                            x: island[ix].x + 1,
+                            y: island[ix].y
+                        });
+                        solid[island[ix].y][island[ix].x + 1].checked = true;
+                    }
+                    if (solid[island[ix].y] && solid[island[ix].y][island[ix].x - 1] && !solid[island[ix].y][island[ix].x - 1].checked) {
+                        island.push({
+                            x: island[ix].x - 1,
+                            y: island[ix].y
+                        });
+                        solid[island[ix].y][island[ix].x - 1].checked = true;
+                    }
+                }
+                islands.push(island);
+
+                // Find the island's children in the indices array and remove them
+                for (var ix = island.length; ix--;) {
+                    for (var kx = indices.length; kx--;) {
+                        if (island[ix].x === indices[kx].x && island[ix].y === indices[kx].y) {
+                            indices.splice(kx, 1);
+                            break;
+                        }
+                    }
+                }
+            } while (indices.length)
+        };
+
+        getFilledArea();
+        console.log(islands.length);
+        console.log(islands[0].length);
+        console.log(math_randomInt(0, islands[0].length - 1));
+    };
+
+    /**
+     * Adds villages and treasure to an island
+     * @param {[[number]]} map The world grid
+     * @param {[[{x: number, y: number}]]} islands An array of all the islands in game
+     * @param {number} min The minimum number of tiles for there to be a village
+     * @param {number} medium The minimum number of tiles for there to be two villages on an island
+     * @param {number} upper The minimum number of tiles for there to be three villages on an island
+     */
+    var addVillages = function (map, islands, min, medium, upper, chanceForTreasure) {
+        // Add a village on each island
+        // Looping through the different islands
+        // ctx.fillStyle = 'red';
+        for (var ix = islands.length; ix--;) {
+            var length = islands[ix].length;
+            // Get a random position in the island
+            var island = {};
+            // var tile = 0;
+
+            if (length <= min) {
+                if (rnd() < chanceForTreasure) {
+                    island = islands[ix][math_randomInt(0, length - 1)];
+                    map[island.y][island.x] = 4;
+                }
+            } else if (length <= medium) {
+                // We add 1 village
+                island = islands[ix][math_randomInt(0, length - 1)];
+                map[island.y][island.x] = 5;
+            } else if (length <= upper) {
+                // We add 2 village
+                island = islands[ix][math_randomInt(0, length - 1)];
+                map[island.y][island.x] = 5;
+                island = islands[ix][math_randomInt(0, length - 1)];
+                map[island.y][island.x] = 5;
+            } else {
+                // We add 3 village
+                island = islands[ix][math_randomInt(0, length - 1)];
+                map[island.y][island.x] = 5;
+                island = islands[ix][math_randomInt(0, length - 1)];
+                map[island.y][island.x] = 5;
+                island = islands[ix][math_randomInt(0, length - 1)];
+                map[island.y][island.x] = 5;
+            }
+            // T_setPixel(ctx, island.x, island.y);
+        }
+    }
     generateMap();
+    findIslands(map, islands);
+    addVillages(map, islands, 10, 17, 25, 0.07);
     renderMap(map);
     // renderBeach(map);
 
