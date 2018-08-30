@@ -8,23 +8,31 @@ var world_height = 502;
 var world_width = 502;
 
 window.onresize = function () {
-    console.log("canvas offset:"+canvas.offsetTop+","+canvas.offsetLeft);
+    // console.log("canvas offset:"+canvas.offsetTop+","+canvas.offsetLeft);
 };
+var canvas_offsetLeft = 0;
+
+var canvas_offsetTop = 0;
+
+window.onload = function() {
+    canvas_offsetLeft = canvas.getBoundingClientRect().left;
+    canvas_offsetTop  = canvas.getBoundingClientRect().top;
+}
 
 /** @type {function(Event)} */
 canvas.onclick = function (event) {
     // Get the current mouse position
-    var tempPos = getMousePos(canvas, event);
-    mouse_x = tempPos.x /* - canvas_offsetLeft */ ;
-    mouse_y = tempPos.y /* - canvas_offsetTop */ ;
+    // var tempPos = getMousePos(canvas, event);
+    mouse_x = event.pageX - canvas_offsetLeft ;
+    mouse_y = event.pageY - canvas_offsetTop ;
     /* position of mouse on canvas */
     console.log(mouse_x+','+mouse_y);
     /* grid position of click */
-    console.log(Math.round(mouse_x/16)+','+Math.round(mouse_y/16));
+    // console.log(Math.round(mouse_x/16)+','+Math.round(mouse_y/16));
     /* plot grid position for lols */
     T_plotRectangle(ctx, {
-        x: Math.floor(mouse_x/16)*16,
-        y: Math.floor(mouse_y/16)*16,
+        x: Math.floor(mouse_x - (mouse_x % 16)),
+        y: Math.floor(mouse_y - (mouse_y % 16)),
         w: 16,
         h: 16,
         color: 'red'
