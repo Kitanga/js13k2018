@@ -4,8 +4,8 @@
 var mouse_x = 0;
 var mouse_y = 0;
 
-var world_height = 100;
-var world_width = 100;
+var world_height = 502;
+var world_width = 502;
 
 window.onresize = function () {
     console.log("canvas offset:"+canvas.offsetTop+","+canvas.offsetLeft);
@@ -210,60 +210,7 @@ function cellularAutomata(width, height) {
         // Create the forest
         map = createForests(map);
     };
-    var renderMap = function (map) {
-        ctx.fillStyle = "blue";
-        ctx.fillRect(0, 0, width, height);
-
-        // Draw the ground blocks
-        ctx.fillStyle = "seaGreen";
-        for (var ix = 0; ix < height; ix++) {
-            for (var kx = 0; kx < width; kx++) {
-                if (map[ix][kx]) {
-                    T_setPixel(ctx, kx, ix);
-                }
-            }
-        }
-
-        // Draw the beach blocks
-        ctx.fillStyle = "navajoWhite";
-        for (var ix = 0; ix < height; ix++) {
-            for (var kx = 0; kx < width; kx++) {
-                if (map[ix][kx] === 2) {
-                    T_setPixel(ctx, kx, ix);
-                }
-            }
-        }
-
-        // Draw the beach blocks
-        ctx.fillStyle = "darkGreen";
-        for (var ix = 0; ix < height; ix++) {
-            for (var kx = 0; kx < width; kx++) {
-                if (map[ix][kx] === 3) {
-                    T_setPixel(ctx, kx, ix);
-                }
-            }
-        }
-        
-        // Draw the treasure blocks
-        ctx.fillStyle = "black";
-        for (var ix = 0; ix < height; ix++) {
-            for (var kx = 0; kx < width; kx++) {
-                if (map[ix][kx] === 4) {
-                    T_setPixel(ctx, kx, ix);
-                }
-            }
-        }
-        
-        // Draw the village blocks
-        ctx.fillStyle = "red";
-        for (var ix = 0; ix < height; ix++) {
-            for (var kx = 0; kx < width; kx++) {
-                if (map[ix][kx] === 5) {
-                    T_setPixel(ctx, kx, ix);
-                }
-            }
-        }
-    };
+    
     var createBeaches = function (map) {
         // Process the map, looking for beach pixels
 
@@ -434,53 +381,110 @@ function cellularAutomata(width, height) {
     return map;
 }
 
-/*
-    renders map around the player
-*/
-var camera_pos_x, camera_pos_y;
-var render_pos_x, render_pos_y;
+var renderMap = function (map) {
+    var width = map.length, height = map[0].length;    
+    ctx.fillStyle = "blue";
+    ctx.fillRect(0, 0, width, height);
 
-function renderMap() {
-    /*
-    //change camera pos if player moved
-    //need to also handle top and right boundary
-    camera_pos_x = player_x > 15 ? player_x-16 : 16;
-    camera_pos_y = player_y > 15 ? player_y-16 : 16;
-    */
-    camera_pos_x = 50;
-    camera_pos_y = 50;
-
-    //player_x-15
-    //player_y-15
-    console.log("drawing tiles in range");
-    console.log("X:"+(camera_pos_x-16)+" to "+ (camera_pos_x+16));
-    console.log("Y:"+(camera_pos_y-16)+" to "+ (camera_pos_y+16));
-    for (var y=0, render_pos_x = camera_pos_x-16; render_pos_x < camera_pos_x+16; render_pos_x++, y++) {
-        for (var x=0, render_pos_y = camera_pos_y-16; render_pos_y < camera_pos_y+16; render_pos_y++, x++) {
-            
-            if (world[render_pos_y][render_pos_x]) {
-                //ctx.fillStyle = "black";
-                //T_setPixel(ctx, x*16, y*16);
-                /*T_plotRectangle(ctx, {
-                    x: x*16,
-                    y: y*16,
-                    w: 8,
-                    h: 8,
-                    shouldFill: true,
-                    color: 'black'
-                });*/
-            } else {
-                //ctx.fillStyle = "blue";
-                //T_setPixel(ctx, x*16, y*16);
-                T_plotRectangle(ctx, {
-                    x: x*16,
-                    y: y*16,
-                    w: 16,
-                    h: 16,
-                    shouldFill: true,
-                    color: 'blue'
-                });
+    // Draw the ground blocks
+    ctx.fillStyle = "seaGreen";
+    for (var ix = 0; ix < height; ix++) {
+        for (var kx = 0; kx < width; kx++) {
+            if (map[ix][kx]) {
+                T_setPixel(ctx, kx, ix);
             }
         }
     }
-}
+
+    // Draw the beach blocks
+    ctx.fillStyle = "navajoWhite";
+    for (var ix = 0; ix < height; ix++) {
+        for (var kx = 0; kx < width; kx++) {
+            if (map[ix][kx] === 2) {
+                T_setPixel(ctx, kx, ix);
+            }
+        }
+    }
+
+    // Draw the beach blocks
+    ctx.fillStyle = "darkGreen";
+    for (var ix = 0; ix < height; ix++) {
+        for (var kx = 0; kx < width; kx++) {
+            if (map[ix][kx] === 3) {
+                T_setPixel(ctx, kx, ix);
+            }
+        }
+    }
+    
+    // Draw the treasure blocks
+    ctx.fillStyle = "black";
+    for (var ix = 0; ix < height; ix++) {
+        for (var kx = 0; kx < width; kx++) {
+            if (map[ix][kx] === 4) {
+                T_setPixel(ctx, kx, ix);
+            }
+        }
+    }
+    
+    // Draw the village blocks
+    ctx.fillStyle = "red";
+    for (var ix = 0; ix < height; ix++) {
+        for (var kx = 0; kx < width; kx++) {
+            if (map[ix][kx] === 5) {
+                T_setPixel(ctx, kx, ix);
+            }
+        }
+    }
+};
+
+/*
+    renders map around the player
+*/
+// var camera_pos_x, camera_pos_y;
+// var render_pos_x, render_pos_y;
+
+// function renderMap() {
+//     /*
+//     //change camera pos if player moved
+//     //need to also handle top and right boundary
+//     camera_pos_x = player_x > 15 ? player_x-16 : 16;
+//     camera_pos_y = player_y > 15 ? player_y-16 : 16;
+//     */
+//     camera_pos_x = 50;
+//     camera_pos_y = 50;
+
+//     //player_x-15
+//     //player_y-15
+//     console.log("drawing tiles in range");
+//     console.log("X:"+(camera_pos_x-16)+" to "+ (camera_pos_x+16));
+//     console.log("Y:"+(camera_pos_y-16)+" to "+ (camera_pos_y+16));
+//     for (var y=0, render_pos_x = camera_pos_x-16; render_pos_x < camera_pos_x+16; render_pos_x++, y++) {
+//         for (var x=0, render_pos_y = camera_pos_y-16; render_pos_y < camera_pos_y+16; render_pos_y++, x++) {
+            
+//             if (world[render_pos_y][render_pos_x]) {
+//                 //ctx.fillStyle = "black";
+//                 //T_setPixel(ctx, x*16, y*16);
+//                 /*T_plotRectangle(ctx, {
+//                     x: x*16,
+//                     y: y*16,
+//                     w: 8,
+//                     h: 8,
+//                     shouldFill: true,
+//                     color: 'black'
+//                 });*/
+//             } else {
+//                 //ctx.fillStyle = "blue";
+//                 //T_setPixel(ctx, x*16, y*16);
+//                 T_plotRectangle(ctx, {
+//                     x: x*16,
+//                     y: y*16,
+//                     w: 16,
+//                     h: 16,
+//                     shouldFill: true,
+//                     color: 'blue'
+//                 });
+//             }
+//         }
+//     }
+// }
+

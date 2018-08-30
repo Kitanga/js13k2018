@@ -29,12 +29,12 @@ function startGame() {
     // player_screen = canvas;
     // player_screenCtx = player_screen.getContext('2d');
     // requestAnimationFrame(loop);
-    cellularAutomata(502,502);
+    //cellularAutomata(502,502);
     player_screen = canvas;
     player_screenCtx = player_screen.getContext('2d');
     requestAnimationFrame(loop);
     //console.log(cellularAutomata(world_height,world_width));
-    renderMap();
+    renderMap(world);
     // cellularAutomata(Math.round(WIDTH / 3),Math.round(WIDTH / 3));
     // cellularAutomata(Math.round(WIDTH / 3),Math.round(WIDTH / 3));
 }
