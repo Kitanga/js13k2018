@@ -207,24 +207,26 @@ function T_plotRectangle(ctx, options) {
 
     // console.log(arguments);
 
-    ctx.fillStyle = options.color || 'black';
-
-    T_plotLine(ctx, x, y, width, y);
-    // ctx.fillStyle = 'yello';
-    T_plotLine(ctx, width, y, width, height);
+    
+    
+   // ctx.fillStyle = 'red';
+    T_plotLine(ctx, x, y, x+width, y);
+  
+    T_plotLine(ctx, x+width, y, x+width, y+height);
     // ctx.fillStyle = 'blue';
-    T_plotLine(ctx, width, height, x, height);
+    T_plotLine(ctx, x+width, y+height, x, y+height);
     // ctx.fillStyle = 'cyan';
-    T_plotLine(ctx, x, height, x, y);
+    T_plotLine(ctx, x, y+height, x, y);
     // T_plotLine(ctx, x, y, 0, height);
     // T_plotLine(ctx, width, 0, width, height);
     // T_plotLine(ctx, 0, height, width, height);
-
+    ctx.fillStyle = options.color || 'black';
     if (options.shouldFill) {
         for (var ix = height; --ix;) {
-            T_plotLine(ctx, x, y + ix, width, y + ix);
+            T_plotLine(ctx, x+1, y + ix, x+width-1, y + ix);
         }
     }
+   
 }
 
 /**
@@ -333,8 +335,8 @@ function T_plotRoundedRect(ctx, options) {
 
 // Canvas related stuffs
 
-var WIDTH = window.innerWidth;
-var HEIGHT = window.innerHeight;
+var WIDTH = 512;
+var HEIGHT = 512;
 
 var canvas = util_createCanvas(WIDTH, HEIGHT);
 // var canvas = doc.createElement('canvas');

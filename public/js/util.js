@@ -42,6 +42,14 @@ function util_createElement(tag, attributes) {
     return element;
 }
 
+function getMousePos(canvas, evt) {
+    var rect = canvas.getBoundingClientRect();
+    return {
+        x: evt.clientX - rect.left,
+        y: evt.clientY - rect.top
+    };
+}
+
 /**
  * Creates a Canvas
  * @param {number} width The width of the canvas
