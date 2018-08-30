@@ -38,6 +38,9 @@ function T_render(dt) {
     player_render(dt);
 }
 
+// TODO: JSDoc everything in Cellular Automata function
+// TODO: Create tests for generating each cell type: water, beaches, land, forests, villages, treasure
+
 var config1 = {
     chanceToLive: 0.43,
     birthLimit: 34,
@@ -81,6 +84,8 @@ var seaConfig = {
     range: -6
 };
 
+
+
 /**
  * Cellular automata for Terrain Generation
  * @param width desired width in tiles
@@ -103,7 +108,7 @@ function cellularAutomata(width, height) {
     var steps = 2;
     var range = -3;
 
-    // All groups of solid pixels are placed in here.
+    /** All groups of solid pixels are placed in here. */
     var islands = [];
 
     var map = new Array(height);
@@ -307,10 +312,7 @@ function cellularAutomata(width, height) {
             do {
                 /** @type {{x: number, y: number}[]} */
                 var island = [indices.splice(0, 1)[0]];
-                // console.log('Done a round');
-                // console.log(island);
                 for (var ix = 0; ix < island.length; ix++) {
-                    // console.log("For loop length", island.length);
                     if (solid[island[ix].y + 1] && solid[island[ix].y + 1][island[ix].x] && !solid[island[ix].y + 1][island[ix].x].checked) {
                         island.push({
                             x: island[ix].x,
@@ -355,9 +357,6 @@ function cellularAutomata(width, height) {
         };
 
         getFilledArea();
-        console.log(islands.length);
-        console.log(islands[0].length);
-        console.log(math_randomInt(0, islands[0].length - 1));
     };
 
     /**
@@ -408,7 +407,7 @@ function cellularAutomata(width, height) {
     generateMap();
     findIslands(map, islands);
     addVillages(map, islands, 10, 17, 25, 0.07);
-    renderMap(map);
+    // renderMap(map);
     // renderBeach(map);
 
     return map;
