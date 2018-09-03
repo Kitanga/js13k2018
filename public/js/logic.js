@@ -1,18 +1,9 @@
 // Use ES5, no ES6
 'use strict';
 
-var mouse_x = 0;
-var mouse_y = 0;
-
-var world_height = 502;
-var world_width = 502;
-
 window.onresize = function () {
     // console.log("canvas offset:"+canvas.offsetTop+","+canvas.offsetLeft);
 };
-var canvas_offsetLeft = 0;
-
-var canvas_offsetTop = 0;
 
 window.onload = function () {
     canvas_offsetLeft = canvas.getBoundingClientRect().left;
@@ -22,23 +13,22 @@ window.onload = function () {
 /** @type {function(Event)} */
 canvas.onclick = function (event) {
     // Get the current mouse position
-    // var tempPos = getMousePos(canvas, event);
-    mouse_x = event.pageX - canvas_offsetLeft;
-    mouse_y = event.pageY - canvas_offsetTop;
+    player_track = getTargetPos(canvas, event);
     /* position of mouse on canvas */
-    console.log(mouse_x + ',' + mouse_y);
+    //console.log(player_track);
+    
     /* grid position of click */
     // console.log(Math.round(mouse_x/16)+','+Math.round(mouse_y/16));
     /* plot grid position for lols */
     T_plotRectangle(ctx, {
-        x: Math.floor(mouse_x - (mouse_x % 16)),
-        y: Math.floor(mouse_y - (mouse_y % 16)),
+        x: Math.floor(player_track.x - (player_track.x % 16)),
+        y: Math.floor(player_track.y - (player_track.y % 16)),
         w: 16,
         h: 16,
         color: 'red'
     });
-    player_x = mouse_x;
-    player_y = mouse_y;
+    player_x += player_track.y;
+    player_y += player_track.x;
     // Tell the renderer that the player should start being rendered and that the player should also move towards the last mouse click
     player_shouldRender = true;
     player_shouldTrack = true;
@@ -59,62 +49,11 @@ function T_update(dt) {
  * @param {number} dt Delta time
  */
 function T_render(dt) {
+    world_render(dt);
     player_render(dt);
+    
 }
 
-// TODO: JSDoc everything in Cellular Automata function
-// TODO: Create tests for generating each cell type: water, beaches, land, forests, villages, treasure
-
-var config1 = {
-    chanceToLive: 0.43,
-    birthLimit: 34,
-    deathLimit: 22,
-    steps: 5,
-    range: -3
-};
-var config2 = {
-    chanceToLive: 0.52,
-    birthLimit: 34,
-    deathLimit: 22,
-    steps: 2,
-    range: -3
-};
-var config3 = {
-    chanceToLive: 0.61,
-    birthLimit: 22,
-    deathLimit: 17,
-    steps: 2,
-    range: -3
-};
-var config4 = {
-    chanceToLive: 0.43,
-    birthLimit: 30,
-    deathLimit: 22,
-    steps: 4,
-    range: -3
-};
-var seaConfig = {
-    chanceToLive: 0.33,
-    birthLimit: 90,
-    deathLimit: 72,
-    steps: 5,
-    range: -5
-};
-var seaConfig2 = {
-    chanceToLive: 0.25,
-    birthLimit: 107,
-    deathLimit: 70,
-    steps: 48,
-    range: -6
-};
-var quickConfig = {
-    chanceToLive: 0.21,
-    birthLimit: 3,
-    deathLimit: 6,
-    steps: 3,
-    range: -1,
-    length: -1 * -1 + 1
-};
 /**
  * Cellular automata for Terrain Generation
  * @param width desired width in tiles
@@ -140,7 +79,7 @@ function cellularAutomata(width, height) {
     };
 
     // All groups of solid pixels are placed in here.
-    var islands = [];
+    islands = [];
 
     var map = new Array(height);
     // Fill the map
@@ -483,111 +422,3 @@ function cellularAutomata(width, height) {
     // return the final map
     return map;
 }
-
-var renderMap = function (map) {
-    var width = map.length,
-        height = map[0].length;
-    ctx.fillStyle = "blue";
-    ctx.fillRect(0, 0, width, height);
-
-    // Draw the ground blocks
-    ctx.fillStyle = "seaGreen";
-    for (var ix = 0; ix < height; ix++) {
-        for (var kx = 0; kx < width; kx++) {
-            if (map[ix][kx]) {
-                T_setPixel(ctx, kx, ix);
-            }
-        }
-    }
-
-    // Draw the beach blocks
-    ctx.fillStyle = "navajoWhite";
-    for (var ix = 0; ix < height; ix++) {
-        for (var kx = 0; kx < width; kx++) {
-            if (map[ix][kx] === 2) {
-                T_setPixel(ctx, kx, ix);
-            }
-        }
-    }
-
-    // Draw the beach blocks
-    ctx.fillStyle = "darkGreen";
-    for (var ix = 0; ix < height; ix++) {
-        for (var kx = 0; kx < width; kx++) {
-            if (map[ix][kx] === 3) {
-                T_setPixel(ctx, kx, ix);
-            }
-        }
-    }
-
-    // Draw the treasure blocks
-    ctx.fillStyle = "black";
-    for (var ix = 0; ix < height; ix++) {
-        for (var kx = 0; kx < width; kx++) {
-            if (map[ix][kx] === 4) {
-                T_setPixel(ctx, kx, ix);
-            }
-        }
-    }
-
-    // Draw the village blocks
-    ctx.fillStyle = "red";
-    for (var ix = 0; ix < height; ix++) {
-        for (var kx = 0; kx < width; kx++) {
-            if (map[ix][kx] === 5) {
-                T_setPixel(ctx, kx, ix);
-            }
-        }
-    }
-};
-
-/*
-    renders map around the player
-*/
-// var camera_pos_x, camera_pos_y;
-// var render_pos_x, render_pos_y;
-
-// function renderMap() {
-//     /*
-//     //change camera pos if player moved
-//     //need to also handle top and right boundary
-//     camera_pos_x = player_x > 15 ? player_x-16 : 16;
-//     camera_pos_y = player_y > 15 ? player_y-16 : 16;
-//     */
-//     camera_pos_x = 50;
-//     camera_pos_y = 50;
-
-//     //player_x-15
-//     //player_y-15
-//     console.log("drawing tiles in range");
-//     console.log("X:"+(camera_pos_x-16)+" to "+ (camera_pos_x+16));
-//     console.log("Y:"+(camera_pos_y-16)+" to "+ (camera_pos_y+16));
-//     for (var y=0, render_pos_x = camera_pos_x-16; render_pos_x < camera_pos_x+16; render_pos_x++, y++) {
-//         for (var x=0, render_pos_y = camera_pos_y-16; render_pos_y < camera_pos_y+16; render_pos_y++, x++) {
-
-//             if (world[render_pos_y][render_pos_x]) {
-//                 //ctx.fillStyle = "black";
-//                 //T_setPixel(ctx, x*16, y*16);
-//                 /*T_plotRectangle(ctx, {
-//                     x: x*16,
-//                     y: y*16,
-//                     w: 8,
-//                     h: 8,
-//                     shouldFill: true,
-//                     color: 'black'
-//                 });*/
-//             } else {
-//                 //ctx.fillStyle = "blue";
-//                 //T_setPixel(ctx, x*16, y*16);
-//                 T_plotRectangle(ctx, {
-//                     x: x*16,
-//                     y: y*16,
-//                     w: 16,
-//                     h: 16,
-//                     shouldFill: true,
-//                     color: 'blue'
-//                 });
-//             }
-//         }
-//     }
-// }

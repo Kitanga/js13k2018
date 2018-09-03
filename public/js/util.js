@@ -1,8 +1,4 @@
-/**
- * @type {Document}
- */
-var doc = document;
-
+'use strict';
 /**
  * Binds functions to events 
  * @param {string} type The type of event
@@ -11,9 +7,6 @@ var doc = document;
 doc.on = function (type, callback) {
     this.addEventListener(type, callback);
 };
-
-var rnd = new alea('test1');
-// var rnd = new alea(Math.random());
 
 /**
  * Gets an element from the DOM
@@ -42,11 +35,12 @@ function util_createElement(tag, attributes) {
     return element;
 }
 
-function getMousePos(canvas, evt) {
-    var rect = canvas.getBoundingClientRect();
+function getTargetPos(canvas, evt) {
+    canvasBound = canvas.getBoundingClientRect();
+    //console.log("current player position:"+player_x+","+player_y);
     return {
-        x: evt.clientX - rect.left,
-        y: evt.clientY - rect.top
+        x: Math.round((evt.clientX - canvasBound.left)/512*8-3.5),
+        y: Math.round((evt.clientY - canvasBound.top)/512*8-3.5)
     };
 }
 
@@ -135,6 +129,10 @@ a.angle() = atan2(a.y, a.x);
 
 function math_randomInt(min, max) {
     return Math.round(min + rnd() * (max - min));
+}
+
+function math_randomColor(r,g,b,range){
+    return math_randomInt(r,r+range)+","+math_randomInt(g,g+range)+","+math_randomInt(b,b+range);    
 }
 
 function genName(len) {

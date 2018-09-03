@@ -206,27 +206,19 @@ function T_plotRectangle(ctx, options) {
     var y = typeof options.y === 'undefined' ? 0 : options.y;
 
     // console.log(arguments);
-
-    
-    
-   // ctx.fillStyle = 'red';
-    T_plotLine(ctx, x, y, x+width, y);
-  
-    T_plotLine(ctx, x+width, y, x+width, y+height);
-    // ctx.fillStyle = 'blue';
-    T_plotLine(ctx, x+width, y+height, x, y+height);
-    // ctx.fillStyle = 'cyan';
-    T_plotLine(ctx, x, y+height, x, y);
+    T_plotLine(ctx, x, y, x+width, y, options.color);
+    T_plotLine(ctx, x+width, y, x+width, y+height, options.color    );
+    T_plotLine(ctx, x+width, y+height, x, y+height, options.color);
+    T_plotLine(ctx, x, y+height, x, y, options.color);
     // T_plotLine(ctx, x, y, 0, height);
     // T_plotLine(ctx, width, 0, width, height);
     // T_plotLine(ctx, 0, height, width, height);
     ctx.fillStyle = options.color || 'black';
     if (options.shouldFill) {
         for (var ix = height; --ix;) {
-            T_plotLine(ctx, x+1, y + ix, x+width-1, y + ix);
+            T_plotLine(ctx, x+1, y + ix, x+width-1, y + ix, options.color);
         }
     }
-   
 }
 
 /**
@@ -246,10 +238,10 @@ function T_plotRoundedRect(ctx, options) {
 
     if (!options.shouldFill) {
         // Draw 4 lines
-        T_plotLine(ctx, x + rad, y, width - rad, 0); /* Top */
-        T_plotLine(ctx, x, y + rad, 0, height - rad); /* Left */
-        T_plotLine(ctx, width, 0 + rad, width, height - rad); /* Right */
-        T_plotLine(ctx, 0 + rad, height, width - rad, height); /* Down */
+        T_plotLine(ctx, x + rad, y, width - rad, 0, options.color); /* Top */
+        T_plotLine(ctx, x, y + rad, 0, height - rad, options.color); /* Left */
+        T_plotLine(ctx, width, 0 + rad, width, height - rad, options.color); /* Right */
+        T_plotLine(ctx, 0 + rad, height, width - rad, height, options.color); /* Down */
     } else {
         // Draw 2 Rectangles
         T_plotRectangle(ctx, {
@@ -258,7 +250,7 @@ function T_plotRoundedRect(ctx, options) {
             w: width - rad + 1,
             h: height + 1,
             shouldFill: true,
-            // color: 'yellow'
+            color: options.color
         });
 
         T_plotRectangle(ctx, {
@@ -267,7 +259,7 @@ function T_plotRoundedRect(ctx, options) {
             w: width + 1,
             h: height - rad - (y + rad) + 2,
             shouldFill: true,
-            // color: 'cyan'
+            color: options.color
         });
     }
 
@@ -333,16 +325,114 @@ function T_plotRoundedRect(ctx, options) {
 // });
 //#endregion
 
-// Canvas related stuffs
-
-var WIDTH = 512;
-var HEIGHT = 512;
-
-var canvas = util_createCanvas(WIDTH, HEIGHT);
+canvas = util_createCanvas(WIDTH, HEIGHT);
 // var canvas = doc.createElement('canvas');
 // canvas.style = "width: " + WIDTH + 'px;' + "height: " + HEIGHT + 'px;';
-var ctx = canvas.getContext('2d');
+ctx = canvas.getContext('2d');
 
 // Add to DOM
-var container = util_getEle('#game');
+container = util_getEle('#game');
 container.appendChild(canvas);
+
+
+/*
+    renders map around the player
+*/
+
+function world_render(dt) {
+    /*
+    //change camera pos if player moved
+    //need to also handle top and right boundary
+    camera_pos_x = player_x > 15 ? player_x-16 : 16;
+    camera_pos_y = player_y > 15 ? player_y-16 : 16;
+    */
+    //still need to handle out of bounds top and right
+    camera_pos_x = Math.floor(player_x > 64 ? player_x : 64);
+    camera_pos_y = Math.floor(player_y > 64 ? player_y : 64);
+    if (camera_pos_x>511-64){camera_pos_x=447;}
+    if (camera_pos_y>511-64){camera_pos_y=447;}
+
+    //player_x-15
+    //player_y-15
+    var w = 64,
+        h = 64,
+        range = 512 / w / 2;
+    //console.log("drawing tiles in range");
+    //console.log("X:"+(camera_pos_x-range)+" to "+ (camera_pos_x+range));
+    //console.log("Y:"+(camera_pos_y-range)+" to "+ (camera_pos_y+range));    
+    
+    //ctx.fillStyle = "blue";
+    //ctx.fillRect(0, 0, width, height);
+    //current bad way to fill sea, for some reason 
+   /* T_plotRectangle(ctx, {
+        x: 0,
+        y: 0,
+        w: width,
+        h: height,
+        shouldFill: true,
+        color: 'blue'
+    });
+*/
+    for (var y=0, render_pos_x = camera_pos_x-range; render_pos_x < camera_pos_x+range; render_pos_x++, y++) {
+        for (var x=0, render_pos_y = camera_pos_y-range; render_pos_y < camera_pos_y+range; render_pos_y++, x++) {
+
+            if(world[render_pos_y][render_pos_x]==undefined) {
+                ctx.drawImage(terrain_sea, x*w,y*h);                
+            } else if (world[render_pos_y][render_pos_x]==1) {
+                ctx.drawImage(terrain_grass, x*w,y*h);
+            } else if (world[render_pos_y][render_pos_x]==2) {
+                ctx.drawImage(terrain_beach, x*w,y*h);
+            } else if (world[render_pos_y][render_pos_x]==3) {
+                ctx.drawImage(terrain_forest, x*w,y*h);
+            } else if (world[render_pos_y][render_pos_x]==4) {
+                ctx.drawImage(terrain_treasure, x*w,y*h);
+            } else if (world[render_pos_y][render_pos_x]==5) {
+                ctx.drawImage(terrain_village, x*w,y*h);
+            } 
+        }
+    }
+}
+
+function T_buffer_terrain() {
+    // var terrains = ["grass","beach","forests","treasure","village"]; might be able to save some bytes by iterating window[terrain_"terraintype"]
+    //fillrect
+
+    var i=9;
+    var j;
+    while(i>0){        
+        i--;
+        j=9;
+        while(j>0){            
+            j--;
+            //steelblue RGB(70, 130, 180)
+            terrain_sea.getContext('2d').fillStyle = "rgb("+math_randomColor(65,125,175,10)+")";
+            terrain_sea.getContext('2d').fillRect(i*8,j*8,8,8);
+            //darkseagreen RGB(143, 188, 139)
+            terrain_grass.getContext('2d').fillStyle = "rgb("+math_randomColor(133,178,129,20)+")";
+            terrain_grass.getContext('2d').fillRect(i*8,j*8,8,8);
+            //lemonchiffon RGB(255, 250, 205)
+            terrain_beach.getContext('2d').fillStyle = "rgb("+math_randomColor(245,240,195,20)+")";
+            terrain_beach.getContext('2d').fillRect(i*8,j*8,8,8);
+            //forestgreen RGB(34, 139, 34)
+            terrain_forest.getContext('2d').fillStyle = "rgb("+math_randomColor(14,119,14,40)+")";
+            terrain_forest.getContext('2d').fillRect(i*8,j*8,8,8);
+            //goldenrod RGB(218, 165, 32)
+            terrain_treasure.getContext('2d').fillStyle = "rgb("+math_randomColor(217,164,31,2)+")";
+            terrain_treasure.getContext('2d').fillRect(i*8,j*8,8,8);
+            //maroon RGB(128, 0, 0)
+            terrain_village.getContext('2d').fillStyle = "rgb("+math_randomColor(128,0,0,50)+")";
+            terrain_village.getContext('2d').fillRect(i*8,j*8,8,8);
+        }
+    }
+    
+
+   
+    
+    
+    
+    
+    
+    
+    
+    
+}
