@@ -32,6 +32,6 @@ function player_update(dt) {
 
 function player_render(dt) {
     if (player_shouldRender) {
-        player_screenCtx.drawImage(player_texture, player_x-player_width/2, player_y-player_height/2);
+        player_screenCtx.drawImage(player_texture, WIDTH/2-player_width/2, HEIGHT/2-player_height/2);
     }
 }

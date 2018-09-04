@@ -1,6 +1,14 @@
 // Use ES5, no ES6
 'use strict';
 
+canvas = util_createCanvas(WIDTH, HEIGHT);
+ctx = canvas.getContext('2d');
+
+// Add to DOM
+container = util_getEle('#game');
+container.appendChild(canvas);
+
+
 // Bresenham functions
 /**
  * An algorithm that creates a pixel on screen
@@ -293,48 +301,6 @@ function T_plotRoundedRect(ctx, options) {
         shouldFill: options.shouldFill
     }); /* Bottom Left */
 }
-
-//#region Test canvas
-// var test_canvas = util_createCanvas(500, 500, function (ctx) {
-// Draw a line
-// T_plotLine(ctx, 0, 0, ctx.canvas.width, ctx.canvas.height);
-
-// Draw an unfilled circle
-// T_plotCircle(ctx, {
-//     radius: 70,
-//     shouldFill: true,
-//     color: 'blue'
-// });
-
-// Draw a filled circle
-// T_plotCircle(ctx, {
-//     shouldFill: true,
-//     quadrant: 't'
-// });
-
-// Draw a rectangle
-// T_plotRectangle(ctx, {
-//     // shouldFill: true
-// });
-
-// Draw a rounded rectangle
-// T_plotRoundedRect(ctx, {
-//     borderRadius: 170,
-//     // shouldFill: true
-// });
-// });
-//#endregion
-
-canvas = util_createCanvas(WIDTH, HEIGHT);
-// var canvas = doc.createElement('canvas');
-// canvas.style = "width: " + WIDTH + 'px;' + "height: " + HEIGHT + 'px;';
-ctx = canvas.getContext('2d');
-
-// Add to DOM
-container = util_getEle('#game');
-container.appendChild(canvas);
-
-
 /*
     renders map around the player
 */
@@ -343,96 +309,117 @@ function world_render(dt) {
     /*
     //change camera pos if player moved
     //need to also handle top and right boundary
-    camera_pos_x = player_x > 15 ? player_x-16 : 16;
-    camera_pos_y = player_y > 15 ? player_y-16 : 16;
+    world_camera_pos_x = player_x > 15 ? player_x-16 : 16;
+    world_camera_pos_y = player_y > 15 ? player_y-16 : 16;
     */
     //still need to handle out of bounds top and right
-    camera_pos_x = Math.floor(player_x > 64 ? player_x : 64);
-    camera_pos_y = Math.floor(player_y > 64 ? player_y : 64);
-    if (camera_pos_x>511-64){camera_pos_x=447;}
-    if (camera_pos_y>511-64){camera_pos_y=447;}
+    var range = 2;
+    world_camera_pos_x = Math.floor(player_x/world_biome_size/world_cell_size > world_cell_size*8 ? player_x/world_biome_size/world_cell_size : world_cell_size*8);
+    world_camera_pos_y = Math.floor(player_y/world_biome_size/world_cell_size > world_cell_size*8 ? player_y/world_biome_size/world_cell_size : world_cell_size*8);
+    if (world_camera_pos_x>(world_width-8)*world_cell_size){(world_width-8)*world_cell_size;}
+    if (world_camera_pos_y>(world_height-8)*world_cell_size){(world_height-8)*world_cell_size;}
 
     //player_x-15
     //player_y-15
-    var w = 64,
-        h = 64,
-        range = 512 / w / 2;
-    //console.log("drawing tiles in range");
-    //console.log("X:"+(camera_pos_x-range)+" to "+ (camera_pos_x+range));
-    //console.log("Y:"+(camera_pos_y-range)+" to "+ (camera_pos_y+range));    
     
-    //ctx.fillStyle = "blue";
-    //ctx.fillRect(0, 0, width, height);
-    //current bad way to fill sea, for some reason 
-   /* T_plotRectangle(ctx, {
-        x: 0,
-        y: 0,
-        w: width,
-        h: height,
-        shouldFill: true,
-        color: 'blue'
-    });
-*/
-    for (var y=0, render_pos_x = camera_pos_x-range; render_pos_x < camera_pos_x+range; render_pos_x++, y++) {
-        for (var x=0, render_pos_y = camera_pos_y-range; render_pos_y < camera_pos_y+range; render_pos_y++, x++) {
+    console.log("camera position");
+    console.log(":"+(world_camera_pos_x)+","+ (world_camera_pos_y));
+    console.log("player Co-Ords");
+    console.log(player_x+","+player_y);
+    console.log("offsets for biome display");
+    console.log(player_x%world_biome_size+","+player_y%world_biome_size);
 
-            if(world[render_pos_y][render_pos_x]==undefined) {
-                ctx.drawImage(terrain_sea, x*w,y*h);                
-            } else if (world[render_pos_y][render_pos_x]==1) {
-                ctx.drawImage(terrain_grass, x*w,y*h);
-            } else if (world[render_pos_y][render_pos_x]==2) {
-                ctx.drawImage(terrain_beach, x*w,y*h);
-            } else if (world[render_pos_y][render_pos_x]==3) {
-                ctx.drawImage(terrain_forest, x*w,y*h);
-            } else if (world[render_pos_y][render_pos_x]==4) {
-                ctx.drawImage(terrain_treasure, x*w,y*h);
-            } else if (world[render_pos_y][render_pos_x]==5) {
-                ctx.drawImage(terrain_village, x*w,y*h);
-            } 
+    for (var y=player_y%world_biome_size-world_biome_size, 
+        render_pos_x = world_camera_pos_x-range; 
+        render_pos_x < world_camera_pos_x+range; 
+        render_pos_x++, y+=world_biome_size) {
+        for (var x=player_x%world_biome_size-world_biome_size, 
+            render_pos_y = world_camera_pos_y-range; 
+            render_pos_y < world_camera_pos_y+range; 
+            render_pos_y++, x+=world_biome_size) {
+            console.log("rendering World Biome at pos:"+render_pos_x+","+render_pos_y);
+            console.log("rendering said tile at canvas pos:"+x+","+y);
+            console.log("rendering said tile with size:"+world_biome_size+","+world_biome_size);
+            switch (world[render_pos_y][render_pos_x]) {
+                case undefined:
+                    ctx.drawImage(terrain_sea, x,y, 256, 256);
+                    break;
+                case 1:
+                    ctx.drawImage(terrain_grass, x,y, world_biome_size, world_biome_size);
+                    break;                
+                case 2:
+                    ctx.drawImage(terrain_beach, x,y, world_biome_size, world_biome_size);
+                    break;                
+                case 3:
+                    ctx.drawImage(terrain_forest, x,y, world_biome_size, world_biome_size);
+                    break;                    
+                case 4:
+                    ctx.drawImage(terrain_treasure, x,y, world_biome_size, world_biome_size);
+                    break;                
+                case 5:
+                    ctx.drawImage(terrain_village, x,y, world_biome_size, world_biome_size);
+                    break;
+            }
         }
     }
+    asdfasdgsda
 }
 
 function T_buffer_terrain() {
     // var terrains = ["grass","beach","forests","treasure","village"]; might be able to save some bytes by iterating window[terrain_"terraintype"]
     //fillrect
 
-    var i=9;
+    var i=world_biome_size / world_cell_size+1;
     var j;
-    while(i>0){        
-        i--;
-        j=9;
-        while(j>0){            
-            j--;
+    while(i>=0){        
+        
+        j=world_biome_size / world_cell_size+1;
+        while(j>=0){            
+            
             //steelblue RGB(70, 130, 180)
             terrain_sea.getContext('2d').fillStyle = "rgb("+math_randomColor(65,125,175,10)+")";
-            terrain_sea.getContext('2d').fillRect(i*8,j*8,8,8);
+            terrain_sea.getContext('2d').fillRect(
+                i*world_cell_size,
+                j*world_cell_size,
+                world_cell_size,
+                world_cell_size);
             //darkseagreen RGB(143, 188, 139)
             terrain_grass.getContext('2d').fillStyle = "rgb("+math_randomColor(133,178,129,20)+")";
-            terrain_grass.getContext('2d').fillRect(i*8,j*8,8,8);
+            terrain_grass.getContext('2d').fillRect(
+                i*world_cell_size,
+                j*world_cell_size,
+                world_cell_size,
+                world_cell_size);
             //lemonchiffon RGB(255, 250, 205)
             terrain_beach.getContext('2d').fillStyle = "rgb("+math_randomColor(245,240,195,20)+")";
-            terrain_beach.getContext('2d').fillRect(i*8,j*8,8,8);
+            terrain_beach.getContext('2d').fillRect(
+                i*world_cell_size,
+                j*world_cell_size,
+                world_cell_size,
+                world_cell_size);
             //forestgreen RGB(34, 139, 34)
             terrain_forest.getContext('2d').fillStyle = "rgb("+math_randomColor(14,119,14,40)+")";
-            terrain_forest.getContext('2d').fillRect(i*8,j*8,8,8);
+            terrain_forest.getContext('2d').fillRect(
+                i*world_cell_size,
+                j*world_cell_size,
+                world_cell_size,
+                world_cell_size);
             //goldenrod RGB(218, 165, 32)
             terrain_treasure.getContext('2d').fillStyle = "rgb("+math_randomColor(217,164,31,2)+")";
-            terrain_treasure.getContext('2d').fillRect(i*8,j*8,8,8);
+            terrain_treasure.getContext('2d').fillRect(
+                i*world_cell_size,
+                j*world_cell_size,
+                world_cell_size,
+                world_cell_size);
             //maroon RGB(128, 0, 0)
             terrain_village.getContext('2d').fillStyle = "rgb("+math_randomColor(128,0,0,50)+")";
-            terrain_village.getContext('2d').fillRect(i*8,j*8,8,8);
+            terrain_village.getContext('2d').fillRect(
+                i*world_cell_size,
+                j*world_cell_size,
+                world_cell_size,
+                world_cell_size);
+            j--;    
         }
+        i--;
     }
-    
-
-   
-    
-    
-    
-    
-    
-    
-    
-    
 }

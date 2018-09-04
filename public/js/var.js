@@ -29,12 +29,15 @@ var mouse_y = 0;
 
 var world_height = 502;
 var world_width = 502;
+// World is comprised of Tiles
 
-var camera_pos_x, camera_pos_y;
+var world_biome_size = 1024;
+var world_cell_size = 32;
+// Each Tile is a 'Biome', comprising of 32 x 32px Cells
+// 'real ingame co-ords' range from 0 -> 32 * 502 = 16064
+
+var world_camera_pos_x, world_camera_pos_y;
 var render_pos_x, render_pos_y;
-
-var canvas_offsetLeft = 0;
-var canvas_offsetTop = 0;
 
 var _now = 0;
 var _dt = 0;

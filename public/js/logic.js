@@ -5,11 +5,6 @@ window.onresize = function () {
     // console.log("canvas offset:"+canvas.offsetTop+","+canvas.offsetLeft);
 };
 
-window.onload = function () {
-    canvas_offsetLeft = canvas.getBoundingClientRect().left;
-    canvas_offsetTop = canvas.getBoundingClientRect().top;
-}
-
 /** @type {function(Event)} */
 canvas.onclick = function (event) {
     // Get the current mouse position

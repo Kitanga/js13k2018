@@ -31,8 +31,8 @@ function startGame() {
     //renderMap(world);
     if (typeof player_x == 'undefined') {
         
-        player_x = 241;
-        player_y = 252;  
+        player_x = world_width * world_biome_size * world_cell_size/2;
+        player_y = world_height * world_biome_size * world_cell_size/2;  
     }    
     // cellularAutomata(Math.round(WIDTH / 3),Math.round(WIDTH / 3));
     // cellularAutomata(Math.round(WIDTH / 3),Math.round(WIDTH / 3));
